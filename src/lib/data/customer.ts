@@ -6,10 +6,10 @@ import { HttpTypes } from '@medusajs/types'
 import { revalidateTag } from 'next/cache'
 import { redirect } from '@lib/i18n/navigation'
 import {
-  getAuthHeaders,
   getCacheOptions,
   getCacheTag,
   getCartId,
+  getRequestHeaders,
   removeAuthToken,
   removeCartId,
   setAuthToken,
@@ -17,9 +17,7 @@ import {
 
 export const retrieveCustomer =
   async (): Promise<HttpTypes.StoreCustomer | null> => {
-    const headers = {
-      ...(await getAuthHeaders()),
-    }
+    const headers = await getRequestHeaders()
 
     const next = {
       ...(await getCacheOptions('customers')),
@@ -40,9 +38,7 @@ export const retrieveCustomer =
   }
 
 export const updateCustomer = async (body: HttpTypes.StoreUpdateCustomer) => {
-  const headers = {
-    ...(await getAuthHeaders()),
-  }
+  const headers = await getRequestHeaders()
 
   const updateRes = await sdk.store.customer
     .update(body, {}, headers)
@@ -72,9 +68,7 @@ export async function signup(_currentState: unknown, formData: FormData) {
 
     await setAuthToken(token as string)
 
-    const headers = {
-      ...(await getAuthHeaders()),
-    }
+    const headers = await getRequestHeaders()
 
     const { customer: createdCustomer } = await sdk.store.customer.create(
       customerForm,
@@ -183,7 +177,7 @@ export async function transferCart() {
     return
   }
 
-  const headers = await getAuthHeaders()
+  const headers = await getRequestHeaders()
 
   await sdk.store.cart.transferCart(cartId, {}, headers)
 
@@ -212,9 +206,7 @@ export const addCustomerAddress = async (
     is_default_shipping: isDefaultShipping,
   }
 
-  const headers = {
-    ...(await getAuthHeaders()),
-  }
+  const headers = await getRequestHeaders()
 
   return sdk.store.customer
     .createAddress(address, {}, headers)
@@ -231,9 +223,7 @@ export const addCustomerAddress = async (
 export const deleteCustomerAddress = async (
   addressId: string
 ): Promise<void> => {
-  const headers = {
-    ...(await getAuthHeaders()),
-  }
+  const headers = await getRequestHeaders()
 
   await sdk.store.customer
     .deleteAddress(addressId, headers)
@@ -276,9 +266,7 @@ export const updateCustomerAddress = async (
     address.phone = phone
   }
 
-  const headers = {
-    ...(await getAuthHeaders()),
-  }
+  const headers = await getRequestHeaders()
 
   return sdk.store.customer
     .updateAddress(addressId, address, {}, headers)

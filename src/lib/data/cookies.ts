@@ -1,5 +1,6 @@
 import 'server-only'
 import { cookies as nextCookies } from 'next/headers'
+import { fallbackLng, LOCALE_COOKIE } from '@lib/i18n/settings'
 
 export const getAuthHeaders = async (): Promise<
   { authorization: string } | Record<string, any>
@@ -82,4 +83,33 @@ export const removeCartId = async () => {
   cookies.set('_resala_cart_id', '', {
     maxAge: -1,
   })
+}
+
+export const getLocale = async () => {
+  const cookies = await nextCookies()
+  return cookies.get(LOCALE_COOKIE)?.value || fallbackLng
+}
+
+export const setLocale = async (locale: string) => {
+  const cookies = await nextCookies()
+  cookies.set(LOCALE_COOKIE, locale, {
+    maxAge: 60 * 60 * 24 * 365,
+  })
+}
+
+export const getLocaleHeaders = async () => {
+  const locale = await getLocale()
+  return { 'accept-language': locale }
+}
+
+export const getRequestHeaders = async () => {
+  const [authHeaders, localeHeaders] = await Promise.all([
+    getAuthHeaders(),
+    getLocaleHeaders(),
+  ])
+  
+  return {
+    ...authHeaders,
+    ...localeHeaders,
+  }
 }

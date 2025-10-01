@@ -6,10 +6,10 @@ import { HttpTypes } from '@medusajs/types'
 import { revalidateTag } from 'next/cache'
 import { redirect } from '@lib/i18n/navigation'
 import {
-  getAuthHeaders,
   getCacheOptions,
   getCacheTag,
   getCartId,
+  getRequestHeaders,
   removeCartId,
   setCartId,
 } from './cookies'
@@ -27,9 +27,7 @@ export async function retrieveCart(cartId?: string) {
     return null
   }
 
-  const headers = {
-    ...(await getAuthHeaders()),
-  }
+  const headers = await getRequestHeaders()
 
   const next = {
     ...(await getCacheOptions('carts')),
@@ -59,9 +57,7 @@ export async function getOrSetCart(countryCode: string) {
 
   let cart = await retrieveCart()
 
-  const headers = {
-    ...(await getAuthHeaders()),
-  }
+  const headers = await getRequestHeaders()
 
   if (!cart) {
     const cartResp = await sdk.store.cart.create(
@@ -93,9 +89,7 @@ export async function updateCart(data: HttpTypes.StoreUpdateCart) {
     throw new Error('No existing cart found, please create one before updating')
   }
 
-  const headers = {
-    ...(await getAuthHeaders()),
-  }
+  const headers = await getRequestHeaders()
 
   return sdk.store.cart
     .update(cartId, data, {}, headers)
@@ -126,9 +120,7 @@ export async function addToCart({
     throw new Error('Error retrieving or creating cart')
   }
 
-  const headers = {
-    ...(await getAuthHeaders()),
-  }
+  const headers = await getRequestHeaders()
 
   await sdk.store.cart
     .createLineItem(
@@ -164,9 +156,7 @@ export async function updateLineItem({
     throw new Error('Missing cart ID when updating line item')
   }
 
-  const headers = {
-    ...(await getAuthHeaders()),
-  }
+  const headers = await getRequestHeaders()
 
   await sdk.store.cart
     .updateLineItem(cartId, lineId, { quantity }, {}, headers)
@@ -188,9 +178,7 @@ export async function deleteLineItem(lineId: string) {
     throw new Error('Missing cart ID when deleting line item')
   }
 
-  const headers = {
-    ...(await getAuthHeaders()),
-  }
+  const headers = await getRequestHeaders()
 
   await sdk.store.cart
     .deleteLineItem(cartId, lineId, headers)
@@ -208,9 +196,7 @@ export async function setShippingMethod({
   cartId: string
   shippingMethodId: string
 }) {
-  const headers = {
-    ...(await getAuthHeaders()),
-  }
+  const headers = await getRequestHeaders()
 
   return sdk.store.cart
     .addShippingMethod(cartId, { option_id: shippingMethodId }, {}, headers)
@@ -225,9 +211,7 @@ export async function initiatePaymentSession(
   cart: HttpTypes.StoreCart,
   data: HttpTypes.StoreInitializePaymentSession
 ) {
-  const headers = {
-    ...(await getAuthHeaders()),
-  }
+  const headers = await getRequestHeaders()
 
   return sdk.store.payment
     .initiatePaymentSession(cart, data, {}, headers)
@@ -246,9 +230,7 @@ export async function applyPromotions(codes: string[]) {
     throw new Error('No existing cart found')
   }
 
-  const headers = {
-    ...(await getAuthHeaders()),
-  }
+  const headers = await getRequestHeaders()
 
   return sdk.store.cart
     .update(cartId, { promo_codes: codes }, {}, headers)
@@ -265,9 +247,7 @@ export async function applyGiftCard(code: string) {
     throw new Error('No existing cart found')
   }
 
-  const headers = {
-    ...(await getAuthHeaders()),
-  }
+  const headers = await getRequestHeaders()
 
   return sdk.store.cart
     .update(cartId, { gift_cards: [{ code }] }, {}, headers)
@@ -284,9 +264,7 @@ export async function removeDiscount(_code: string) {
     throw new Error('No existing cart found')
   }
 
-  const headers = {
-    ...(await getAuthHeaders()),
-  }
+  const headers = await getRequestHeaders()
 
   return sdk.store.cart
     .update(cartId, { promo_codes: [] }, {}, headers)
@@ -303,9 +281,7 @@ export async function removeGiftCard(codeToRemove: string, giftCards: any[]) {
     throw new Error('No existing cart found')
   }
 
-  const headers = {
-    ...(await getAuthHeaders()),
-  }
+  const headers = await getRequestHeaders()
 
   return sdk.store.cart
     .update(
@@ -402,9 +378,7 @@ export async function placeOrder(cartId?: string) {
     throw new Error('No existing cart found when placing an order')
   }
 
-  const headers = {
-    ...(await getAuthHeaders()),
-  }
+  const headers = await getRequestHeaders()
 
   const cartRes = await sdk.store.cart
     .complete(id, {}, headers)
@@ -455,9 +429,7 @@ export async function updateRegion(countryCode: string, currentPath: string) {
 
 export async function listCartOptions() {
   const cartId = await getCartId()
-  const headers = {
-    ...(await getAuthHeaders()),
-  }
+  const headers = await getRequestHeaders()
   const next = {
     ...(await getCacheOptions('shippingOptions')),
   }
