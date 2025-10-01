@@ -1,11 +1,10 @@
 'use client'
 
-import { isManual, isStripe } from '@lib/constants'
+import { isManual, isPaymob } from '@lib/constants'
 import { placeOrder } from '@lib/data/cart'
 import { HttpTypes } from '@medusajs/types'
 import { Button } from '@medusajs/ui'
-import { useElements, useStripe } from '@stripe/react-stripe-js'
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import ErrorMessage from '../error-message'
 import { useTranslations } from 'next-intl'
 
@@ -28,24 +27,24 @@ const PaymentButton: React.FC<PaymentButtonProps> = ({
   const paymentSession = cart.payment_collection?.payment_sessions?.[0]
 
   switch (true) {
-    case isStripe(paymentSession?.provider_id):
+    case isPaymob(paymentSession?.provider_id):
       return (
-        <StripePaymentButton
-          notReady={notReady}
+        <PaymobPaymentButton
           cart={cart}
+          notReady={notReady}
           data-testid={dataTestId}
         />
       )
     case isManual(paymentSession?.provider_id):
       return (
-        <ManualTestPaymentButton notReady={notReady} data-testid={dataTestId} />
+        <ManualPaymentButton notReady={notReady} data-testid={dataTestId} />
       )
     default:
       return <Button disabled>Select a payment method</Button>
   }
 }
 
-const StripePaymentButton = ({
+const PaymobPaymentButton = ({
   cart,
   notReady,
   'data-testid': dataTestId,
@@ -54,109 +53,43 @@ const StripePaymentButton = ({
   notReady: boolean
   'data-testid'?: string
 }) => {
+  const t = useTranslations()
   const [submitting, setSubmitting] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
-
-  const onPaymentCompleted = async () => {
-    await placeOrder()
-      .catch((err) => {
-        setErrorMessage(err.message)
-      })
-      .finally(() => {
-        setSubmitting(false)
-      })
-  }
-
-  const t = useTranslations()
-  const stripe = useStripe()
-  const elements = useElements()
-  const card = elements?.getElement('card')
 
   const session = cart.payment_collection?.payment_sessions?.find(
     (s) => s.status === 'pending'
   )
 
-  const disabled = !stripe || !elements ? true : false
+  const disabled = !session || !window.Pixel
 
-  const handlePayment = async () => {
-    setSubmitting(true)
-
-    if (!stripe || !elements || !card || !cart) {
-      setSubmitting(false)
-      return
-    }
-
-    await stripe
-      .confirmCardPayment(session?.data.client_secret as string, {
-        payment_method: {
-          card: card,
-          billing_details: {
-            name:
-              cart.billing_address?.first_name +
-              ' ' +
-              cart.billing_address?.last_name,
-            address: {
-              city: cart.billing_address?.city ?? undefined,
-              country: cart.billing_address?.country_code ?? undefined,
-              line1: cart.billing_address?.address_1 ?? undefined,
-              line2: cart.billing_address?.address_2 ?? undefined,
-              postal_code: cart.billing_address?.postal_code ?? undefined,
-              state: cart.billing_address?.province ?? undefined,
-            },
-            email: cart.email,
-            phone: cart.billing_address?.phone ?? undefined,
-          },
-        },
-      })
-      .then(({ error, paymentIntent }) => {
-        if (error) {
-          const pi = error.payment_intent
-
-          if (
-            (pi && pi.status === 'requires_capture') ||
-            (pi && pi.status === 'succeeded')
-          ) {
-            onPaymentCompleted()
-          }
-
-          setErrorMessage(error.message || null)
-          return
-        }
-
-        if (
-          (paymentIntent && paymentIntent.status === 'requires_capture') ||
-          paymentIntent.status === 'succeeded'
-        ) {
-          return onPaymentCompleted()
-        }
-
-        return
-      })
-  }
+  const handlePayment = useCallback(() => {
+    setErrorMessage(null)
+    const invoked = window.dispatchEvent(new Event('payFromOutside'))
+    setSubmitting(invoked)
+  }, [])
 
   return (
     <>
       <Button
+        isLoading={submitting}
         disabled={disabled || notReady}
         onClick={handlePayment}
         size="large"
-        isLoading={submitting}
         data-testid={dataTestId}
+        type="submit"
       >
         {t('PLACE_ORDER')}
       </Button>
-      <ErrorMessage
-        error={errorMessage}
-        data-testid="stripe-payment-error-message"
-      />
+      <ErrorMessage error={errorMessage} data-testid="payment-error-message" />
     </>
   )
 }
 
-const ManualTestPaymentButton = ({ notReady }: { notReady: boolean }) => {
+const ManualPaymentButton = ({ notReady }: { notReady: boolean }) => {
+  const t = useTranslations()
   const [submitting, setSubmitting] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
-  const t = useTranslations()
 
   const onPaymentCompleted = async () => {
     await placeOrder()

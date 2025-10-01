@@ -2,10 +2,10 @@ import 'server-only'
 import { cookies as nextCookies } from 'next/headers'
 
 export const getAuthHeaders = async (): Promise<
-  { authorization: string } | {}
+  { authorization: string } | Record<string, any>
 > => {
   const cookies = await nextCookies()
-  const token = cookies.get('_medusa_jwt')?.value
+  const token = cookies.get('_resala_jwt')?.value
 
   if (!token) {
     return {}
@@ -17,21 +17,21 @@ export const getAuthHeaders = async (): Promise<
 export const getCacheTag = async (tag: string): Promise<string> => {
   try {
     const cookies = await nextCookies()
-    const cacheId = cookies.get('_medusa_cache_id')?.value
+    const cacheId = cookies.get('_resala_cache_id')?.value
 
     if (!cacheId) {
       return ''
     }
 
     return `${tag}-${cacheId}`
-  } catch (error) {
+  } catch {
     return ''
   }
 }
 
 export const getCacheOptions = async (
   tag: string
-): Promise<{ tags: string[] } | {}> => {
+): Promise<{ tags: string[] } | Record<string, any>> => {
   if (typeof window !== 'undefined') {
     return {}
   }
@@ -47,7 +47,7 @@ export const getCacheOptions = async (
 
 export const setAuthToken = async (token: string) => {
   const cookies = await nextCookies()
-  cookies.set('_medusa_jwt', token, {
+  cookies.set('_resala_jwt', token, {
     maxAge: 60 * 60 * 24 * 7,
     httpOnly: true,
     sameSite: 'strict',
@@ -57,19 +57,19 @@ export const setAuthToken = async (token: string) => {
 
 export const removeAuthToken = async () => {
   const cookies = await nextCookies()
-  cookies.set('_medusa_jwt', '', {
+  cookies.set('_resala_jwt', '', {
     maxAge: -1,
   })
 }
 
 export const getCartId = async () => {
   const cookies = await nextCookies()
-  return cookies.get('_medusa_cart_id')?.value
+  return cookies.get('_resala_cart_id')?.value
 }
 
 export const setCartId = async (cartId: string) => {
   const cookies = await nextCookies()
-  cookies.set('_medusa_cart_id', cartId, {
+  cookies.set('_resala_cart_id', cartId, {
     maxAge: 60 * 60 * 24 * 7,
     httpOnly: true,
     sameSite: 'strict',
@@ -79,7 +79,7 @@ export const setCartId = async (cartId: string) => {
 
 export const removeCartId = async () => {
   const cookies = await nextCookies()
-  cookies.set('_medusa_cart_id', '', {
+  cookies.set('_resala_cart_id', '', {
     maxAge: -1,
   })
 }

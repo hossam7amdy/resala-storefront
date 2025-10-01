@@ -34,7 +34,7 @@ export default async function CheckoutLayout({
               className="txt-compact-xlarge-plus text-ui-fg-subtle hover:text-ui-fg-base uppercase"
               data-testid="store-link"
             >
-              {t('MEDUSA_STORE')}
+              {t('RESALA_STORE')}
             </LocalizedClientLink>
             <div className="flex-1 basis-0" />
           </nav>

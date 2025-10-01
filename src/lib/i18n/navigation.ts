@@ -1,5 +1,18 @@
 import { createNavigation } from 'next-intl/navigation'
 import { routing } from './settings'
 
-export const { Link, redirect, usePathname, useRouter } =
-  createNavigation(routing)
+const {
+  Link,
+  redirect: intlRedirect,
+  usePathname,
+  useRouter,
+} = createNavigation(routing)
+
+const redirect = (path: string): never => {
+  return intlRedirect({
+    href: path,
+    locale: '',
+  })
+}
+
+export { redirect, Link, usePathname, useRouter }

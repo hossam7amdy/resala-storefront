@@ -19,7 +19,7 @@ const Hero = () => {
             level="h2"
             className="text-3xl leading-10 text-ui-fg-subtle font-normal"
           >
-            {t('POWERED_BY_MEDUSA_AND_NEXT_JS')}
+            {t('POWERED_BY_RESALA_AND_NEXT_JS')}
           </Heading>
         </span>
         <a

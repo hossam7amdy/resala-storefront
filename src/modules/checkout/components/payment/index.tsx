@@ -3,7 +3,11 @@
 import { useTranslations } from 'next-intl'
 
 import { RadioGroup } from '@headlessui/react'
-import { isStripe as isStripeFunc, paymentInfoMap } from '@lib/constants'
+import {
+  isStripe as isStripeFunc,
+  isPaymob as isPaymobFunc,
+  paymentInfoMap,
+} from '@lib/constants'
 import { initiatePaymentSession } from '@lib/data/cart'
 import { CheckCircleSolid, CreditCard } from '@medusajs/icons'
 import { Button, Container, Heading, Text, clx } from '@medusajs/ui'
@@ -16,6 +20,7 @@ import { StripeCardElementOptions } from '@stripe/stripe-js'
 import { useSearchParams } from 'next/navigation'
 import { usePathname, useRouter } from '@lib/i18n/navigation'
 import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import PaymobCardContainer from '../payment-container/paymob-container'
 
 const Payment = ({
   cart,
@@ -38,12 +43,25 @@ const Payment = ({
     activeSession?.provider_id ?? ''
   )
 
+  const setPaymentMethod = async (method: string) => {
+    setError(null)
+    setSelectedPaymentMethod(method)
+    await initiatePaymentSession(cart, {
+      provider_id: method,
+      data: {
+        redirection_url: getRedirectionUrl(),
+        billing_address: cart.billing_address,
+      },
+    })
+  }
+
   const searchParams = useSearchParams()
   const router = useRouter()
   const pathname = usePathname()
 
   const isOpen = searchParams.get('step') === 'payment'
 
+  const isPaymob = isPaymobFunc(selectedPaymentMethod)
   const isStripe = isStripeFunc(selectedPaymentMethod)
   const stripeReady = useContext(StripeContext)
 
@@ -86,15 +104,26 @@ const Payment = ({
     })
   }
 
+  const getRedirectionUrl = useCallback(
+    () => new URL('/checkout-callback', window?.location.origin).toString(),
+    []
+  )
+
   const handleSubmit = async () => {
     setIsLoading(true)
     try {
       const shouldInputCard =
-        isStripeFunc(selectedPaymentMethod) && !activeSession
+        (isPaymobFunc(selectedPaymentMethod) ||
+          isStripeFunc(selectedPaymentMethod)) &&
+        !activeSession
 
       if (!activeSession) {
         await initiatePaymentSession(cart, {
           provider_id: selectedPaymentMethod,
+          data: {
+            redirection_url: getRedirectionUrl(),
+            billing_address: cart.billing_address,
+          },
         })
       }
 
@@ -151,18 +180,29 @@ const Payment = ({
             <>
               <RadioGroup
                 value={selectedPaymentMethod}
-                onChange={(value: string) => setSelectedPaymentMethod(value)}
+                onChange={(value: string) => setPaymentMethod(value)}
               >
-                {availablePaymentMethods.map((paymentMethod) => {
-                  return (
-                    <PaymentContainer
-                      paymentInfoMap={paymentInfoMap}
-                      paymentProviderId={paymentMethod.id}
-                      key={paymentMethod.id}
-                      selectedPaymentOptionId={selectedPaymentMethod}
-                    />
-                  )
-                })}
+                {availablePaymentMethods.map((paymentMethod) => (
+                  <div key={paymentMethod.id}>
+                    {isPaymobFunc(paymentMethod.id) ? (
+                      <PaymobCardContainer
+                        cart={cart}
+                        paymentProviderId={paymentMethod.id}
+                        selectedPaymentOptionId={selectedPaymentMethod}
+                        paymentInfoMap={paymentInfoMap}
+                        setError={setError}
+                        setCardComplete={setCardComplete}
+                      />
+                    ) : (
+                      <PaymentContainer
+                        paymentInfoMap={paymentInfoMap}
+                        paymentProviderId={paymentMethod.id}
+                        key={paymentMethod.id}
+                        selectedPaymentOptionId={selectedPaymentMethod}
+                      />
+                    )}
+                  </div>
+                ))}
               </RadioGroup>
               {isStripe && stripeReady && (
                 <div className="mt-5 transition-all duration-150 ease-in-out">
@@ -211,7 +251,7 @@ const Payment = ({
             onClick={handleSubmit}
             isLoading={isLoading}
             disabled={
-              (isStripe && !cardComplete) ||
+              ((isPaymob || isStripe) && !cardComplete) ||
               (!selectedPaymentMethod && !paidByGiftcard)
             }
             data-testid="submit-payment-button"

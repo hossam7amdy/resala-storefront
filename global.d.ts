@@ -1,13 +1,13 @@
-import enMessages from '../messages/en/index.json'
+import arMessages from './messages/ar.json'
 import { FormatsType } from './src/lib/i18n/request'
 
-type Messages = typeof en
+type Messages = typeof arMessages
 
 declare module 'next-intl' {
-  type DefaultLocale = 'en'
-  type SupportedLocales = DefaultLocale | 'ar'
+  type DefaultLocale = 'ar'
+  type SupportedLocales = DefaultLocale | 'en'
 
-  type MessageSchema = typeof enMessages
+  type MessageSchema = Messages
 
   interface IntlConfig {
     locale: SupportedLocales

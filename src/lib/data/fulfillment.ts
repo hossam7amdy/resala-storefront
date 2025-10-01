@@ -60,7 +60,5 @@ export const calculatePriceForShippingOption = async (
       }
     )
     .then(({ shipping_option }) => shipping_option)
-    .catch((e) => {
-      return null
-    })
+    .catch(() => null)
 }

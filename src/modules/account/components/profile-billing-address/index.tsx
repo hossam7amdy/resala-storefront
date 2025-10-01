@@ -20,6 +20,8 @@ const ProfileBillingAddress: React.FC<MyInformationProps> = ({
   customer,
   regions,
 }) => {
+  const t = useTranslations()
+
   const regionOptions = useMemo(() => {
     return (
       regions
@@ -90,8 +92,6 @@ const ProfileBillingAddress: React.FC<MyInformationProps> = ({
       </div>
     )
   }, [billingAddress, regionOptions])
-
-  const t = useTranslations()
 
   return (
     <form action={formAction} onReset={() => clearState()} className="w-full">

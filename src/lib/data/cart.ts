@@ -223,10 +223,7 @@ export async function setShippingMethod({
 
 export async function initiatePaymentSession(
   cart: HttpTypes.StoreCart,
-  data: {
-    provider_id: string
-    context?: Record<string, unknown>
-  }
+  data: HttpTypes.StoreInitializePaymentSession
 ) {
   const headers = {
     ...(await getAuthHeaders()),
@@ -263,46 +260,69 @@ export async function applyPromotions(codes: string[]) {
 }
 
 export async function applyGiftCard(code: string) {
-  //   const cartId = getCartId()
-  //   if (!cartId) return "No cartId cookie found"
-  //   try {
-  //     await updateCart(cartId, { gift_cards: [{ code }] }).then(() => {
-  //       revalidateTag("cart")
-  //     })
-  //   } catch (error: any) {
-  //     throw error
-  //   }
+  const cartId = await getCartId()
+  if (!cartId) {
+    throw new Error('No existing cart found')
+  }
+
+  const headers = {
+    ...(await getAuthHeaders()),
+  }
+
+  return sdk.store.cart
+    .update(cartId, { gift_cards: [{ code }] }, {}, headers)
+    .then(async () => {
+      const cartCacheTag = await getCacheTag('carts')
+      revalidateTag(cartCacheTag)
+    })
+    .catch(medusaError)
 }
 
-export async function removeDiscount(code: string) {
-  // const cartId = getCartId()
-  // if (!cartId) return "No cartId cookie found"
-  // try {
-  //   await deleteDiscount(cartId, code)
-  //   revalidateTag("cart")
-  // } catch (error: any) {
-  //   throw error
-  // }
+export async function removeDiscount(_code: string) {
+  const cartId = await getCartId()
+  if (!cartId) {
+    throw new Error('No existing cart found')
+  }
+
+  const headers = {
+    ...(await getAuthHeaders()),
+  }
+
+  return sdk.store.cart
+    .update(cartId, { promo_codes: [] }, {}, headers)
+    .then(async () => {
+      const cartCacheTag = await getCacheTag('carts')
+      revalidateTag(cartCacheTag)
+    })
+    .catch(medusaError)
 }
 
-export async function removeGiftCard(
-  codeToRemove: string,
-  giftCards: any[]
-  // giftCards: GiftCard[]
-) {
-  //   const cartId = getCartId()
-  //   if (!cartId) return "No cartId cookie found"
-  //   try {
-  //     await updateCart(cartId, {
-  //       gift_cards: [...giftCards]
-  //         .filter((gc) => gc.code !== codeToRemove)
-  //         .map((gc) => ({ code: gc.code })),
-  //     }).then(() => {
-  //       revalidateTag("cart")
-  //     })
-  //   } catch (error: any) {
-  //     throw error
-  //   }
+export async function removeGiftCard(codeToRemove: string, giftCards: any[]) {
+  const cartId = await getCartId()
+  if (!cartId) {
+    throw new Error('No existing cart found')
+  }
+
+  const headers = {
+    ...(await getAuthHeaders()),
+  }
+
+  return sdk.store.cart
+    .update(
+      cartId,
+      {
+        gift_cards: [...giftCards]
+          .filter((gc) => gc.code !== codeToRemove)
+          .map((gc) => ({ code: gc.code })),
+      },
+      {},
+      headers
+    )
+    .then(async () => {
+      const cartCacheTag = await getCacheTag('carts')
+      revalidateTag(cartCacheTag)
+    })
+    .catch(medusaError)
 }
 
 export async function submitPromotionForm(
@@ -402,7 +422,7 @@ export async function placeOrder(cartId?: string) {
     redirect(`/${countryCode}/order/${cartRes?.order.id}/confirmed`)
   }
 
-  return cartRes.cart
+  return (cartRes as { cart: any }).cart
 }
 
 /**

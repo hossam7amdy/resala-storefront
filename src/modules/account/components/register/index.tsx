@@ -9,6 +9,7 @@ import ErrorMessage from '@modules/checkout/components/error-message'
 import { SubmitButton } from '@modules/checkout/components/submit-button'
 import LocalizedClientLink from '@modules/common/components/localized-client-link'
 import { signup } from '@lib/data/customer'
+import GoogleLoginButton from '../google-login-button'
 
 type Props = {
   setCurrentView: (view: LOGIN_VIEW) => void
@@ -25,10 +26,10 @@ const Register = ({ setCurrentView }: Props) => {
       data-testid="register-page"
     >
       <h1 className="text-large-semi uppercase mb-6">
-        {t('BECOME_A_MEDUSA_STORE_MEMBER')}
+        {t('BECOME_A_RESALA_STORE_MEMBER')}
       </h1>
       <p className="text-center text-base-regular text-ui-fg-base mb-4">
-        {t('CREATE_YOUR_MEDUSA_STORE_MEMBE')}
+        {t('CREATE_YOUR_RESALA_STORE_MEMBE')}
       </p>
       <form className="w-full flex flex-col" action={formAction}>
         <div className="flex flex-col w-full gap-y-2">
@@ -92,6 +93,23 @@ const Register = ({ setCurrentView }: Props) => {
           {t('JOIN')}
         </SubmitButton>
       </form>
+
+      <div className="w-full mt-6">
+        <div className="relative">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-gray-300" />
+          </div>
+          <div className="relative flex justify-center text-sm">
+            <span className="px-2 bg-white text-gray-500">
+              {t('Or continue with')}
+            </span>
+          </div>
+        </div>
+        <div className="mt-6">
+          <GoogleLoginButton />
+        </div>
+      </div>
+
       <span className="text-center text-ui-fg-base text-small-regular mt-6">
         {t('ALREADY_A_MEMBER')}{' '}
         <button

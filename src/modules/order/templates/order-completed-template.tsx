@@ -23,7 +23,7 @@ export default async function OrderCompletedTemplate({
 
   const t = await getTranslations()
 
-  const isOnboarding = cookies.get('_medusa_onboarding')?.value === 'true'
+  const isOnboarding = cookies.get('_resala_onboarding')?.value === 'true'
 
   return (
     <div className="py-6 min-h-[calc(100vh-64px)]">

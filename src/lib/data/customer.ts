@@ -11,6 +11,7 @@ import {
   getCacheTag,
   getCartId,
   removeAuthToken,
+  removeCartId,
   setAuthToken,
 } from './cookies'
 
@@ -122,11 +123,56 @@ export async function login(_currentState: unknown, formData: FormData) {
   }
 }
 
+export async function loginWithGoogle(callbackUrl: string) {
+  const authUrl = await sdk.auth.login('customer', 'google', {
+    callback_url: callbackUrl,
+  })
+
+  if (typeof authUrl !== 'string') {
+    redirect(authUrl.location)
+  }
+
+  try {
+    await setAuthToken(authUrl as string)
+    const customerCacheTag = await getCacheTag('customers')
+    revalidateTag(customerCacheTag)
+  } catch (error: any) {
+    return error.toString()
+  }
+
+  try {
+    await transferCart()
+  } catch (error: any) {
+    return error.toString()
+  }
+}
+
+export async function handleGoogleCallback(queryParams: Record<string, any>) {
+  try {
+    const token = await sdk.auth.callback('customer', 'google', queryParams)
+    await setAuthToken(token)
+    const customerCacheTag = await getCacheTag('customers')
+    revalidateTag(customerCacheTag)
+    await transferCart()
+  } catch (error: any) {
+    console.error('Google callback error:', error)
+    return error.toString()
+  }
+}
+
 export async function signout(countryCode: string) {
   await sdk.auth.logout()
-  removeAuthToken()
-  revalidateTag('auth')
-  revalidateTag('customer')
+
+  await removeAuthToken()
+
+  const customerCacheTag = await getCacheTag('customers')
+  revalidateTag(customerCacheTag)
+
+  await removeCartId()
+
+  const cartCacheTag = await getCacheTag('carts')
+  revalidateTag(cartCacheTag)
+
   redirect(`/${countryCode}/account`)
 }
 
@@ -172,7 +218,7 @@ export const addCustomerAddress = async (
 
   return sdk.store.customer
     .createAddress(address, {}, headers)
-    .then(async ({ customer }) => {
+    .then(async () => {
       const customerCacheTag = await getCacheTag('customers')
       revalidateTag(customerCacheTag)
       return { success: true, error: null }

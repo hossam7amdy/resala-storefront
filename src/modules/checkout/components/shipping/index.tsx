@@ -37,9 +37,9 @@ const Shipping: React.FC<ShippingProps> = ({
 
   const t = useTranslations()
 
-  const searchParams = useSearchParams()
   const router = useRouter()
   const pathname = usePathname()
+  const searchParams = useSearchParams()
 
   const isOpen = searchParams.get('step') === 'delivery'
 
@@ -56,7 +56,9 @@ const Shipping: React.FC<ShippingProps> = ({
           const pricesMap: Record<string, number> = {}
           res
             .filter((r) => r.status === 'fulfilled')
-            .forEach((p) => (pricesMap[p.value?.id || ''] = p.value?.amount!))
+            .forEach(
+              (p) => (pricesMap[p.value?.id || ''] = p.value?.amount || 0)
+            )
 
           setCalculatedPricesMap(pricesMap)
           setIsLoadingPrices(false)
@@ -133,7 +135,7 @@ const Shipping: React.FC<ShippingProps> = ({
         <div data-testid="delivery-options-container">
           <div className="pb-8">
             <RadioGroup
-              value={shippingMethodId}
+              value={shippingMethodId || undefined}
               onChange={handleSetShippingMethod}
             >
               {availableShippingMethods?.map((option) => {
@@ -212,7 +214,7 @@ const Shipping: React.FC<ShippingProps> = ({
                 <Text className="txt-medium text-ui-fg-subtle">
                   {cart.shipping_methods?.at(-1)?.name}{' '}
                   {convertToLocale({
-                    amount: cart.shipping_methods.at(-1)?.amount!,
+                    amount: cart.shipping_methods?.at(-1)?.amount as number,
                     currency_code: cart?.currency_code,
                   })}
                 </Text>

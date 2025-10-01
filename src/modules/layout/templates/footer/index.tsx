@@ -23,7 +23,7 @@ export default async function Footer() {
               href="/"
               className="txt-compact-xlarge-plus text-ui-fg-subtle hover:text-ui-fg-base uppercase"
             >
-              {t('MEDUSA_STORE')}
+              {t('RESALA_STORE')}
             </LocalizedClientLink>
           </div>
           <div className="text-small-regular gap-10 md:gap-x-16 grid grid-cols-2 sm:grid-cols-3">
@@ -153,7 +153,7 @@ export default async function Footer() {
         <div className="flex w-full mb-16 justify-between text-ui-fg-muted">
           <Text className="txt-compact-small">
             {t('_8')} {new Date().getFullYear()}{' '}
-            {t('MEDUSA_STORE_ALL_RIGHTS_RESER')}
+            {t('RESALA_STORE_ALL_RIGHTS_RESER')}
           </Text>
           <MedusaCTA />
         </div>
