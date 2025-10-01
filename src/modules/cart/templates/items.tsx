@@ -1,3 +1,5 @@
+import { useTranslations } from 'next-intl'
+
 import repeat from '@lib/util/repeat'
 import { HttpTypes } from '@medusajs/types'
 import { Heading, Table } from '@medusajs/ui'
@@ -11,22 +13,24 @@ type ItemsTemplateProps = {
 
 const ItemsTemplate = ({ cart }: ItemsTemplateProps) => {
   const items = cart?.items
+  const t = useTranslations()
+
   return (
     <div>
       <div className="pb-3 flex items-center">
-        <Heading className="text-[2rem] leading-[2.75rem]">Cart</Heading>
+        <Heading className="text-[2rem] leading-[2.75rem]">{t('CART')}</Heading>
       </div>
       <Table>
         <Table.Header className="border-t-0">
           <Table.Row className="text-ui-fg-subtle txt-medium-plus">
-            <Table.HeaderCell className="!pl-0">Item</Table.HeaderCell>
+            <Table.HeaderCell className="!pl-0">{t('ITEMS')}</Table.HeaderCell>
             <Table.HeaderCell></Table.HeaderCell>
-            <Table.HeaderCell>Quantity</Table.HeaderCell>
+            <Table.HeaderCell>{t('QUANTITY')}</Table.HeaderCell>
             <Table.HeaderCell className="hidden small:table-cell">
-              Price
+              {t('PRICE')}
             </Table.HeaderCell>
             <Table.HeaderCell className="!pr-0 text-right">
-              Total
+              {t('TOTAL')}
             </Table.HeaderCell>
           </Table.Row>
         </Table.Header>

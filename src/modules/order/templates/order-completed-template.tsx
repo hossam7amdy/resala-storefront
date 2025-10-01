@@ -1,3 +1,5 @@
+import { getTranslations } from 'next-intl/server'
+
 import { Heading } from '@medusajs/ui'
 import { cookies as nextCookies } from 'next/headers'
 
@@ -19,6 +21,8 @@ export default async function OrderCompletedTemplate({
 }: OrderCompletedTemplateProps) {
   const cookies = await nextCookies()
 
+  const t = await getTranslations()
+
   const isOnboarding = cookies.get('_medusa_onboarding')?.value === 'true'
 
   return (
@@ -33,12 +37,12 @@ export default async function OrderCompletedTemplate({
             level="h1"
             className="flex flex-col gap-y-3 text-ui-fg-base text-3xl mb-4"
           >
-            <span>Thank you!</span>
-            <span>Your order was placed successfully.</span>
+            <span>{t('THANK_YOU')}</span>
+            <span>{t('YOUR_ORDER_WAS_PLACED_SUCCESSF')}</span>
           </Heading>
           <OrderDetails order={order} />
           <Heading level="h2" className="flex flex-row text-3xl-regular">
-            Summary
+            {t('SUMMARY')}
           </Heading>
           <Items order={order} />
           <CartTotals totals={order} />

@@ -1,3 +1,5 @@
+import { useTranslations } from 'next-intl'
+
 import { HttpTypes } from '@medusajs/types'
 import { Text } from '@medusajs/ui'
 
@@ -12,13 +14,15 @@ const LineItemOptions = ({
   'data-testid': dataTestid,
   'data-value': dataValue,
 }: LineItemOptionsProps) => {
+  const t = useTranslations()
+
   return (
     <Text
       data-testid={dataTestid}
       data-value={dataValue}
       className="inline-block txt-medium text-ui-fg-subtle w-full overflow-hidden text-ellipsis"
     >
-      Variant: {variant?.title}
+      {t('VARIANT')} {variant?.title}
     </Text>
   )
 }

@@ -1,19 +1,17 @@
 import 'server-only'
 import { cookies as nextCookies } from 'next/headers'
 
-export const getAuthHeaders = async (): Promise<{ authorization?: string }> => {
-  try {
-    const cookies = await nextCookies()
-    const token = cookies.get('_medusa_jwt')?.value
+export const getAuthHeaders = async (): Promise<
+  { authorization: string } | {}
+> => {
+  const cookies = await nextCookies()
+  const token = cookies.get('_medusa_jwt')?.value
 
-    if (!token) {
-      return {}
-    }
-
-    return { authorization: `Bearer ${token}` }
-  } catch {
+  if (!token) {
     return {}
   }
+
+  return { authorization: `Bearer ${token}` }
 }
 
 export const getCacheTag = async (tag: string): Promise<string> => {
@@ -26,14 +24,14 @@ export const getCacheTag = async (tag: string): Promise<string> => {
     }
 
     return `${tag}-${cacheId}`
-  } catch {
+  } catch (error) {
     return ''
   }
 }
 
 export const getCacheOptions = async (
   tag: string
-): Promise<{ tags?: string[] }> => {
+): Promise<{ tags: string[] } | {}> => {
   if (typeof window !== 'undefined') {
     return {}
   }

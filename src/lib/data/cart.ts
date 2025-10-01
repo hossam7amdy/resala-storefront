@@ -4,7 +4,7 @@ import { sdk } from '@lib/config'
 import medusaError from '@lib/util/medusa-error'
 import { HttpTypes } from '@medusajs/types'
 import { revalidateTag } from 'next/cache'
-import { redirect } from 'next/navigation'
+import { redirect } from '@lib/i18n/navigation'
 import {
   getAuthHeaders,
   getCacheOptions,
@@ -20,10 +20,8 @@ import { getRegion } from './regions'
  * @param cartId - optional - The ID of the cart to retrieve.
  * @returns The cart object if found, or null if not found.
  */
-export async function retrieveCart(cartId?: string, fields?: string) {
+export async function retrieveCart(cartId?: string) {
   const id = cartId || (await getCartId())
-  fields ??=
-    '*items, *region, *items.product, *items.variant, *items.thumbnail, *items.metadata, +items.total, *promotions, +shipping_methods.name'
 
   if (!id) {
     return null
@@ -41,13 +39,14 @@ export async function retrieveCart(cartId?: string, fields?: string) {
     .fetch<HttpTypes.StoreCartResponse>(`/store/carts/${id}`, {
       method: 'GET',
       query: {
-        fields,
+        fields:
+          '*items, *region, *items.product, *items.variant, *items.thumbnail, *items.metadata, +items.total, *promotions, +shipping_methods.name',
       },
       headers,
       next,
       cache: 'force-cache',
     })
-    .then(({ cart }: { cart: HttpTypes.StoreCart }) => cart)
+    .then(({ cart }) => cart)
     .catch(() => null)
 }
 
@@ -58,7 +57,7 @@ export async function getOrSetCart(countryCode: string) {
     throw new Error(`Region not found for country code: ${countryCode}`)
   }
 
-  let cart = await retrieveCart(undefined, 'id,region_id')
+  let cart = await retrieveCart()
 
   const headers = {
     ...(await getAuthHeaders()),
@@ -100,13 +99,9 @@ export async function updateCart(data: HttpTypes.StoreUpdateCart) {
 
   return sdk.store.cart
     .update(cartId, data, {}, headers)
-    .then(async ({ cart }: { cart: HttpTypes.StoreCart }) => {
+    .then(async ({ cart }) => {
       const cartCacheTag = await getCacheTag('carts')
       revalidateTag(cartCacheTag)
-
-      const fulfillmentCacheTag = await getCacheTag('fulfillment')
-      revalidateTag(fulfillmentCacheTag)
-
       return cart
     })
     .catch(medusaError)
@@ -148,9 +143,6 @@ export async function addToCart({
     .then(async () => {
       const cartCacheTag = await getCacheTag('carts')
       revalidateTag(cartCacheTag)
-
-      const fulfillmentCacheTag = await getCacheTag('fulfillment')
-      revalidateTag(fulfillmentCacheTag)
     })
     .catch(medusaError)
 }
@@ -181,9 +173,6 @@ export async function updateLineItem({
     .then(async () => {
       const cartCacheTag = await getCacheTag('carts')
       revalidateTag(cartCacheTag)
-
-      const fulfillmentCacheTag = await getCacheTag('fulfillment')
-      revalidateTag(fulfillmentCacheTag)
     })
     .catch(medusaError)
 }
@@ -208,9 +197,6 @@ export async function deleteLineItem(lineId: string) {
     .then(async () => {
       const cartCacheTag = await getCacheTag('carts')
       revalidateTag(cartCacheTag)
-
-      const fulfillmentCacheTag = await getCacheTag('fulfillment')
-      revalidateTag(fulfillmentCacheTag)
     })
     .catch(medusaError)
 }
@@ -237,7 +223,10 @@ export async function setShippingMethod({
 
 export async function initiatePaymentSession(
   cart: HttpTypes.StoreCart,
-  data: HttpTypes.StoreInitializePaymentSession
+  data: {
+    provider_id: string
+    context?: Record<string, unknown>
+  }
 ) {
   const headers = {
     ...(await getAuthHeaders()),
@@ -269,9 +258,6 @@ export async function applyPromotions(codes: string[]) {
     .then(async () => {
       const cartCacheTag = await getCacheTag('carts')
       revalidateTag(cartCacheTag)
-
-      const fulfillmentCacheTag = await getCacheTag('fulfillment')
-      revalidateTag(fulfillmentCacheTag)
     })
     .catch(medusaError)
 }
@@ -412,10 +398,6 @@ export async function placeOrder(cartId?: string) {
   if (cartRes?.type === 'order') {
     const countryCode =
       cartRes.order.shipping_address?.country_code?.toLowerCase()
-
-    const orderCacheTag = await getCacheTag('orders')
-    revalidateTag(orderCacheTag)
-
     removeCartId()
     redirect(`/${countryCode}/order/${cartRes?.order.id}/confirmed`)
   }

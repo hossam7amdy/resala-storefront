@@ -4,19 +4,14 @@ import { CreditCard } from '@medusajs/icons'
 import Ideal from '@modules/common/icons/ideal'
 import Bancontact from '@modules/common/icons/bancontact'
 import PayPal from '@modules/common/icons/paypal'
-import Wallet from '@modules/common/icons/wallet'
 
 /* Map of payment provider_id to their title and icon. Add in any payment providers you want to use. */
 export const paymentInfoMap: Record<
   string,
   { title: string; icon: React.JSX.Element }
 > = {
-  pp_paymob_paymob: {
-    title: 'Credit card',
-    icon: <CreditCard />,
-  },
   pp_stripe_stripe: {
-    title: 'Credit card (USD)',
+    title: 'Credit card',
     icon: <CreditCard />,
   },
   'pp_stripe-ideal_stripe': {
@@ -32,9 +27,10 @@ export const paymentInfoMap: Record<
     icon: <PayPal />,
   },
   pp_system_default: {
-    title: 'Cash on delivery',
-    icon: <Wallet />,
+    title: 'Manual Payment',
+    icon: <CreditCard />,
   },
+  // Add more payment providers here
 }
 
 // This only checks if it is native stripe for card payments, it ignores the other stripe-based providers
@@ -46,9 +42,6 @@ export const isPaypal = (providerId?: string) => {
 }
 export const isManual = (providerId?: string) => {
   return providerId?.startsWith('pp_system_default')
-}
-export const isPaymob = (providerId?: string) => {
-  return providerId?.startsWith('pp_paymob')
 }
 
 // Add currencies that don't need to be divided by 100

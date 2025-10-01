@@ -1,5 +1,7 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
+
 import Back from '@modules/common/icons/back'
 import FastDelivery from '@modules/common/icons/fast-delivery'
 import Refresh from '@modules/common/icons/refresh'
@@ -12,13 +14,15 @@ type ProductTabsProps = {
 }
 
 const ProductTabs = ({ product }: ProductTabsProps) => {
+  const t = useTranslations()
+
   const tabs = [
     {
-      label: 'Product Information',
+      label: t('PRODUCT_INFORMATION'),
       component: <ProductInfoTab product={product} />,
     },
     {
-      label: 'Shipping & Returns',
+      label: t('SHIPPING_RETURNS'),
       component: <ShippingInfoTab />,
     },
   ]
@@ -42,34 +46,38 @@ const ProductTabs = ({ product }: ProductTabsProps) => {
 }
 
 const ProductInfoTab = ({ product }: ProductTabsProps) => {
+  const t = useTranslations()
+
   return (
     <div className="text-small-regular py-8">
       <div className="grid grid-cols-2 gap-x-8">
         <div className="flex flex-col gap-y-4">
           <div>
-            <span className="font-semibold">Material</span>
-            <p>{product.material ? product.material : '-'}</p>
+            <span className="font-semibold">{t('MATERIAL')}</span>
+            <p>{product.material ? product.material : t('_5')}</p>
           </div>
           <div>
-            <span className="font-semibold">Country of origin</span>
-            <p>{product.origin_country ? product.origin_country : '-'}</p>
+            <span className="font-semibold">{t('COUNTRY_OF_ORIGIN')}</span>
+            <p>{product.origin_country ? product.origin_country : t('_5')}</p>
           </div>
           <div>
-            <span className="font-semibold">Type</span>
-            <p>{product.type ? product.type.value : '-'}</p>
+            <span className="font-semibold">{t('TYPE')}</span>
+            <p>{product.type ? product.type.value : t('_5')}</p>
           </div>
         </div>
         <div className="flex flex-col gap-y-4">
           <div>
-            <span className="font-semibold">Weight</span>
-            <p>{product.weight ? `${product.weight} g` : '-'}</p>
+            <span className="font-semibold">{t('WEIGHT')}</span>
+            <p>{product.weight ? `${product.weight} g` : t('_5')}</p>
           </div>
           <div>
-            <span className="font-semibold">Dimensions</span>
+            <span className="font-semibold">{t('DIMENSIONS')}</span>
             <p>
               {product.length && product.width && product.height
-                ? `${product.length}L x ${product.width}W x ${product.height}H`
-                : '-'}
+                ? `${product.length}${t('L_X')} ${product.width}${t('W_X')} ${
+                    product.height
+                  }${t('H')}`
+                : t('_5')}
             </p>
           </div>
         </div>
@@ -79,38 +87,30 @@ const ProductInfoTab = ({ product }: ProductTabsProps) => {
 }
 
 const ShippingInfoTab = () => {
+  const t = useTranslations()
+
   return (
     <div className="text-small-regular py-8">
       <div className="grid grid-cols-1 gap-y-8">
         <div className="flex items-start gap-x-2">
           <FastDelivery />
           <div>
-            <span className="font-semibold">Fast delivery</span>
-            <p className="max-w-sm">
-              Your package will arrive in 3-5 business days at your pick up
-              location or in the comfort of your home.
-            </p>
+            <span className="font-semibold">{t('FAST_DELIVERY')}</span>
+            <p className="max-w-sm">{t('YOUR_PACKAGE_WILL_ARRIVE_IN')}</p>
           </div>
         </div>
         <div className="flex items-start gap-x-2">
           <Refresh />
           <div>
-            <span className="font-semibold">Simple exchanges</span>
-            <p className="max-w-sm">
-              Is the fit not quite right? No worries - we&apos;ll exchange your
-              product for a new one.
-            </p>
+            <span className="font-semibold">{t('SIMPLE_EXCHANGES')}</span>
+            <p className="max-w-sm">{t('IS_THE_FIT_NOT_QUITE_RIGHT_NO')}</p>
           </div>
         </div>
         <div className="flex items-start gap-x-2">
           <Back />
           <div>
-            <span className="font-semibold">Easy returns</span>
-            <p className="max-w-sm">
-              Just return your product and we&apos;ll refund your money. No
-              questions asked – we&apos;ll do our best to make sure your return
-              is hassle-free.
-            </p>
+            <span className="font-semibold">{t('EASY_RETURNS')}</span>
+            <p className="max-w-sm">{t('IS_THE_FIT_NOT_QUITE_RIGHT_NO')}</p>
           </div>
         </div>
       </div>

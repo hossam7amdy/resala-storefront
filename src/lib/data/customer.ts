@@ -4,25 +4,20 @@ import { sdk } from '@lib/config'
 import medusaError from '@lib/util/medusa-error'
 import { HttpTypes } from '@medusajs/types'
 import { revalidateTag } from 'next/cache'
-import { redirect } from 'next/navigation'
+import { redirect } from '@lib/i18n/navigation'
 import {
   getAuthHeaders,
   getCacheOptions,
   getCacheTag,
   getCartId,
   removeAuthToken,
-  removeCartId,
   setAuthToken,
 } from './cookies'
 
 export const retrieveCustomer =
   async (): Promise<HttpTypes.StoreCustomer | null> => {
-    const authHeaders = await getAuthHeaders()
-
-    if (!authHeaders) return null
-
     const headers = {
-      ...authHeaders,
+      ...(await getAuthHeaders()),
     }
 
     const next = {
@@ -109,13 +104,13 @@ export async function login(_currentState: unknown, formData: FormData) {
   const password = formData.get('password') as string
 
   try {
-    const token = await sdk.auth.login('customer', 'emailpass', {
-      email,
-      password,
-    })
-    await setAuthToken(token as string)
-    const customerCacheTag = await getCacheTag('customers')
-    revalidateTag(customerCacheTag)
+    await sdk.auth
+      .login('customer', 'emailpass', { email, password })
+      .then(async (token) => {
+        await setAuthToken(token as string)
+        const customerCacheTag = await getCacheTag('customers')
+        revalidateTag(customerCacheTag)
+      })
   } catch (error: any) {
     return error.toString()
   }
@@ -123,60 +118,15 @@ export async function login(_currentState: unknown, formData: FormData) {
   try {
     await transferCart()
   } catch (error: any) {
-    return error.toString()
-  }
-}
-
-export async function loginWithGoogle(callbackUrl: string) {
-  const authUrl = await sdk.auth.login('customer', 'google', {
-    callback_url: callbackUrl,
-  })
-
-  if (typeof authUrl !== 'string') {
-    redirect(authUrl.location)
-  }
-
-  try {
-    await setAuthToken(authUrl)
-    const customerCacheTag = await getCacheTag('customers')
-    revalidateTag(customerCacheTag)
-  } catch (error: any) {
-    return error.toString()
-  }
-
-  try {
-    await transferCart()
-  } catch (error: any) {
-    return error.toString()
-  }
-}
-
-export async function handleGoogleCallback(queryParams: Record<string, any>) {
-  try {
-    const token = await sdk.auth.callback('customer', 'google', queryParams)
-    await setAuthToken(token)
-    const customerCacheTag = await getCacheTag('customers')
-    revalidateTag(customerCacheTag)
-    await transferCart()
-  } catch (error: any) {
-    console.error('Google callback error:', error)
     return error.toString()
   }
 }
 
 export async function signout(countryCode: string) {
   await sdk.auth.logout()
-
-  await removeAuthToken()
-
-  const customerCacheTag = await getCacheTag('customers')
-  revalidateTag(customerCacheTag)
-
-  await removeCartId()
-
-  const cartCacheTag = await getCacheTag('carts')
-  revalidateTag(cartCacheTag)
-
+  removeAuthToken()
+  revalidateTag('auth')
+  revalidateTag('customer')
   redirect(`/${countryCode}/account`)
 }
 
@@ -191,8 +141,7 @@ export async function transferCart() {
 
   await sdk.store.cart.transferCart(cartId, {}, headers)
 
-  const cartCacheTag = await getCacheTag('carts')
-  revalidateTag(cartCacheTag)
+  revalidateTag('cart')
 }
 
 export const addCustomerAddress = async (
@@ -223,7 +172,7 @@ export const addCustomerAddress = async (
 
   return sdk.store.customer
     .createAddress(address, {}, headers)
-    .then(async ({ customer: _ }) => {
+    .then(async ({ customer }) => {
       const customerCacheTag = await getCacheTag('customers')
       revalidateTag(customerCacheTag)
       return { success: true, error: null }

@@ -154,7 +154,7 @@ export default function ProductActions({
           isLoading={isAdding}
           data-testid="add-product-button"
         >
-          {!selectedVariant
+          {!selectedVariant && !options
             ? 'Select variant'
             : !inStock || !isValidVariant
               ? 'Out of stock'

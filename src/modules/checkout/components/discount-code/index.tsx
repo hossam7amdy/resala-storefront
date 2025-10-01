@@ -1,10 +1,13 @@
 'use client'
 
-import { Badge, Heading, Input, Label, Text } from '@medusajs/ui'
-import React from 'react'
+import { useTranslations } from 'next-intl'
 
-import { applyPromotions } from '@lib/data/cart'
+import { Badge, Heading, Input, Label, Text, Tooltip } from '@medusajs/ui'
+import React, { useActionState } from 'react'
+
+import { applyPromotions, submitPromotionForm } from '@lib/data/cart'
 import { convertToLocale } from '@lib/util/money'
+import { InformationCircleSolid } from '@medusajs/icons'
 import { HttpTypes } from '@medusajs/types'
 import Trash from '@modules/common/icons/trash'
 import ErrorMessage from '../error-message'
@@ -18,42 +21,39 @@ type DiscountCodeProps = {
 
 const DiscountCode: React.FC<DiscountCodeProps> = ({ cart }) => {
   const [isOpen, setIsOpen] = React.useState(false)
-  const [errorMessage, setErrorMessage] = React.useState('')
 
-  const { promotions = [] } = cart
+  const { items = [], promotions = [] } = cart
   const removePromotionCode = async (code: string) => {
     const validPromotions = promotions.filter(
       (promotion) => promotion.code !== code
     )
 
     await applyPromotions(
-      validPromotions.filter((p) => p.code !== undefined).map((p) => p.code!)
+      validPromotions.filter((p) => p.code === undefined).map((p) => p.code!)
     )
   }
 
   const addPromotionCode = async (formData: FormData) => {
-    setErrorMessage('')
-
     const code = formData.get('code')
     if (!code) {
       return
     }
     const input = document.getElementById('promotion-input') as HTMLInputElement
     const codes = promotions
-      .filter((p) => p.code !== undefined)
+      .filter((p) => p.code === undefined)
       .map((p) => p.code!)
     codes.push(code.toString())
 
-    try {
-      await applyPromotions(codes)
-    } catch (e: any) {
-      setErrorMessage(e.message)
-    }
+    await applyPromotions(codes)
 
     if (input) {
       input.value = ''
     }
   }
+
+  const [message, formAction] = useActionState(submitPromotionForm, null)
+
+  const t = useTranslations()
 
   return (
     <div className="w-full bg-white flex flex-col">
@@ -66,7 +66,7 @@ const DiscountCode: React.FC<DiscountCodeProps> = ({ cart }) => {
               className="txt-medium text-ui-fg-interactive hover:text-ui-fg-interactive-hover"
               data-testid="add-discount-button"
             >
-              Add Promotion Code(s)
+              {t('ADD_PROMOTION_CODE_S')}
             </button>
 
             {/* <Tooltip content="You can add multiple promotion codes">
@@ -89,12 +89,12 @@ const DiscountCode: React.FC<DiscountCodeProps> = ({ cart }) => {
                   variant="secondary"
                   data-testid="discount-apply-button"
                 >
-                  Apply
+                  {t('APPLY')}
                 </SubmitButton>
               </div>
 
               <ErrorMessage
-                error={errorMessage}
+                error={message}
                 data-testid="discount-error-message"
               />
             </>
@@ -105,7 +105,7 @@ const DiscountCode: React.FC<DiscountCodeProps> = ({ cart }) => {
           <div className="w-full flex items-center">
             <div className="flex flex-col w-full">
               <Heading className="txt-medium mb-2">
-                Promotion(s) applied:
+                {t('PROMOTION_S_APPLIED')}
               </Heading>
 
               {promotions.map((promotion) => {
@@ -161,7 +161,7 @@ const DiscountCode: React.FC<DiscountCodeProps> = ({ cart }) => {
                       >
                         <Trash size={14} />
                         <span className="sr-only">
-                          Remove discount code from order
+                          {t('REMOVE_DISCOUNT_CODE_FROM_ORDER')}
                         </span>
                       </button>
                     )}

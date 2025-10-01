@@ -1,3 +1,5 @@
+import { useTranslations, useFormatter } from 'next-intl'
+
 import { Button } from '@medusajs/ui'
 import { useMemo } from 'react'
 
@@ -11,6 +13,9 @@ type OrderCardProps = {
 }
 
 const OrderCard = ({ order }: OrderCardProps) => {
+  const t = useTranslations()
+  const format = useFormatter()
+
   const numberOfLines = useMemo(() => {
     return (
       order.items?.reduce((acc, item) => {
@@ -23,14 +28,21 @@ const OrderCard = ({ order }: OrderCardProps) => {
     return order.items?.length ?? 0
   }, [order])
 
+  const formattedDate = format.dateTime(new Date(order.created_at), {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  })
+
   return (
     <div className="bg-white flex flex-col" data-testid="order-card">
       <div className="uppercase text-large-semi mb-1">
-        #<span data-testid="order-display-id">{order.display_id}</span>
+        {t('_1')}
+        <span data-testid="order-display-id">{order.display_id}</span>
       </div>
       <div className="flex items-center divide-x divide-gray-200 text-small-regular text-ui-fg-base">
         <span className="pr-2" data-testid="order-created-at">
-          {new Date(order.created_at).toDateString()}
+          {formattedDate}
         </span>
         <span className="px-2" data-testid="order-amount">
           {convertToLocale({
@@ -39,7 +51,7 @@ const OrderCard = ({ order }: OrderCardProps) => {
           })}
         </span>
         <span className="pl-2">{`${numberOfLines} ${
-          numberOfLines > 1 ? 'items' : 'item'
+          numberOfLines > 1 ? t('ITEMS') : t('ITEM')
         }`}</span>
       </div>
       <div className="grid grid-cols-2 small:grid-cols-4 gap-4 my-4">
@@ -58,7 +70,7 @@ const OrderCard = ({ order }: OrderCardProps) => {
                 >
                   {i.title}
                 </span>
-                <span className="ml-2">x</span>
+                <span className="ml-2">{t('X')}</span>
                 <span data-testid="item-quantity">{i.quantity}</span>
               </div>
             </div>
@@ -67,16 +79,18 @@ const OrderCard = ({ order }: OrderCardProps) => {
         {numberOfProducts > 4 && (
           <div className="w-full h-full flex flex-col items-center justify-center">
             <span className="text-small-regular text-ui-fg-base">
-              + {numberOfLines - 4}
+              {t('_2')} {numberOfLines - 4}
             </span>
-            <span className="text-small-regular text-ui-fg-base">more</span>
+            <span className="text-small-regular text-ui-fg-base">
+              {t('MORE')}
+            </span>
           </div>
         )}
       </div>
       <div className="flex justify-end">
         <LocalizedClientLink href={`/account/orders/details/${order.id}`}>
           <Button data-testid="order-details-link" variant="secondary">
-            See details
+            {t('SEE_DETAILS')}
           </Button>
         </LocalizedClientLink>
       </div>
