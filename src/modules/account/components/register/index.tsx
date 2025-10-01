@@ -101,7 +101,7 @@ const Register = ({ setCurrentView }: Props) => {
           </div>
           <div className="relative flex justify-center text-sm">
             <span className="px-2 bg-white text-gray-500">
-              {t('Or continue with')}
+              {t('OR_CONTINUE_WITH')}
             </span>
           </div>
         </div>

@@ -29,7 +29,7 @@ const GoogleLoginButton = () => {
       data-testid="google-login-button"
     >
       {isLoading ? <Spinner className="animate-spin" /> : <Google />}
-      {isLoading ? t('Signing in...') : t('Continue with Google')}
+      {isLoading ? t('SIGNING_IN') : t('CONTINUE_WITH_GOOGLE')}
     </Button>
   )
 }
