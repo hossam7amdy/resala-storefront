@@ -236,5 +236,9 @@
   "FROM": "من",
   "RELATED_PRODUCTS": "منتجات ذات صلة",
   "MIGHT_ALSO_WANT_CHECK_OUT_PRODUCTS": "قد ترغب أيضًا في الاطلاع على هذه المنتجات.",
-  "INVALID_DATE": "تاريخ غير صالح"
+  "INVALID_DATE": "تاريخ غير صالح",
+  "LANGUAGE": "اللغة",
+  "OR_CONTINUE_WITH": "أو استمرار باستخدام",
+  "SIGNING_IN": "جاري تسجيل الدخول...",
+  "CONTINUE_WITH_GOOGLE": "استمرار باستخدام جوجل"
 }

@@ -236,5 +236,9 @@
   "FROM": "From",
   "RELATED_PRODUCTS": "Related products",
   "MIGHT_ALSO_WANT_CHECK_OUT_PRODUCTS": "You might also want to check out these products.",
-  "INVALID_DATE": "Invalid Date"
+  "INVALID_DATE": "Invalid Date",
+  "LANGUAGE": "Language",
+  "OR_CONTINUE_WITH": "Or continue with",
+  "SIGNING_IN": "Signing in...",
+  "CONTINUE_WITH_GOOGLE": "Continue with Google"
 }
