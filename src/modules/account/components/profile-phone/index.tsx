@@ -1,5 +1,7 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
+
 import React, { useEffect, useActionState } from 'react'
 
 import Input from '@modules/common/components/input'
@@ -13,6 +15,8 @@ type MyInformationProps = {
 }
 
 const ProfileEmail: React.FC<MyInformationProps> = ({ customer }) => {
+  const t = useTranslations()
+
   const [successState, setSuccessState] = React.useState(false)
 
   const updateCustomerPhone = async (
@@ -47,7 +51,7 @@ const ProfileEmail: React.FC<MyInformationProps> = ({ customer }) => {
   return (
     <form action={formAction} className="w-full">
       <AccountInfo
-        label="Phone"
+        label={t('PHONE')}
         currentInfo={`${customer.phone}`}
         isSuccess={successState}
         isError={!!state.error}
@@ -57,7 +61,7 @@ const ProfileEmail: React.FC<MyInformationProps> = ({ customer }) => {
       >
         <div className="grid grid-cols-1 gap-y-2">
           <Input
-            label="Phone"
+            label={t('PHONE')}
             name="phone"
             type="phone"
             autoComplete="phone"

@@ -1,3 +1,4 @@
+import { getTranslations } from 'next-intl/server'
 import { Metadata } from 'next'
 
 import OrderOverview from '@modules/account/components/order-overview'
@@ -13,6 +14,7 @@ export const metadata: Metadata = {
 
 export default async function Orders() {
   const orders = await listOrders()
+  const t = await getTranslations()
 
   if (!orders) {
     notFound()
@@ -21,10 +23,9 @@ export default async function Orders() {
   return (
     <div className="w-full" data-testid="orders-page-wrapper">
       <div className="mb-8 flex flex-col gap-y-4">
-        <h1 className="text-2xl-semi">Orders</h1>
+        <h1 className="text-2xl-semi">{t('ORDERS')}</h1>
         <p className="text-base-regular">
-          View your previous orders and their status. You can also create
-          returns or exchanges for your orders if needed.
+          {t('VIEW_YOUR_PREVIOUS_ORDERS_AND')}
         </p>
       </div>
       <div>

@@ -1,8 +1,11 @@
+import { useTranslations } from 'next-intl'
 import { Heading, Text } from '@medusajs/ui'
 
 import InteractiveLink from '@modules/common/components/interactive-link'
 
 const EmptyCartMessage = () => {
+  const t = useTranslations()
+
   return (
     <div
       className="py-48 px-2 flex flex-col justify-center items-start"
@@ -12,14 +15,13 @@ const EmptyCartMessage = () => {
         level="h1"
         className="flex flex-row text-3xl-regular gap-x-2 items-baseline"
       >
-        Cart
+        {t('CART')}
       </Heading>
       <Text className="text-base-regular mt-4 mb-6 max-w-[32rem]">
-        You don&apos;t have anything in your cart. Let&apos;s change that, use
-        the link below to start browsing our products.
+        {t('YOU_DON_T_HAVE_ANYTHING_IN_YOU')}
       </Text>
       <div>
-        <InteractiveLink href="/store">Explore products</InteractiveLink>
+        <InteractiveLink href="/store">{t('EXPLORE_PRODUCTS')}</InteractiveLink>
       </div>
     </div>
   )

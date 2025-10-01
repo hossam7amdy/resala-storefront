@@ -6,6 +6,7 @@ import { HttpTypes } from '@medusajs/types'
 import { Button } from '@medusajs/ui'
 import React, { useCallback, useState } from 'react'
 import ErrorMessage from '../error-message'
+import { useTranslations } from 'next-intl'
 
 type PaymentButtonProps = {
   cart: HttpTypes.StoreCart
@@ -52,6 +53,7 @@ const PaymobPaymentButton = ({
   notReady: boolean
   'data-testid'?: string
 }) => {
+  const t = useTranslations()
   const [submitting, setSubmitting] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
@@ -77,7 +79,7 @@ const PaymobPaymentButton = ({
         data-testid={dataTestId}
         type="submit"
       >
-        Place order
+        {t('PLACE_ORDER')}
       </Button>
       <ErrorMessage error={errorMessage} data-testid="payment-error-message" />
     </>
@@ -85,6 +87,7 @@ const PaymobPaymentButton = ({
 }
 
 const ManualPaymentButton = ({ notReady }: { notReady: boolean }) => {
+  const t = useTranslations()
   const [submitting, setSubmitting] = useState(false)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
 
@@ -113,7 +116,7 @@ const ManualPaymentButton = ({ notReady }: { notReady: boolean }) => {
         size="large"
         data-testid="submit-order-button"
       >
-        Place order
+        {t('PLACE_ORDER')}
       </Button>
       <ErrorMessage
         error={errorMessage}

@@ -1,5 +1,7 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
+
 import {
   Listbox,
   ListboxButton,
@@ -11,7 +13,8 @@ import { Fragment, useEffect, useMemo, useState } from 'react'
 import ReactCountryFlag from 'react-country-flag'
 
 import { StateType } from '@lib/hooks/use-toggle-state'
-import { useParams, usePathname } from 'next/navigation'
+import { useParams } from 'next/navigation'
+import { usePathname } from '@lib/i18n/navigation'
 import { updateRegion } from '@lib/data/cart'
 import { HttpTypes } from '@medusajs/types'
 
@@ -62,6 +65,8 @@ const CountrySelect = ({ toggleState, regions }: CountrySelectProps) => {
     close()
   }
 
+  const t = useTranslations()
+
   return (
     <div>
       <Listbox
@@ -75,7 +80,7 @@ const CountrySelect = ({ toggleState, regions }: CountrySelectProps) => {
       >
         <ListboxButton className="py-1 w-full">
           <div className="txt-compact-small flex items-start gap-x-2">
-            <span>Shipping to:</span>
+            <span>{t('SHIPPING_TO')}</span>
             {current && (
               <span className="txt-compact-small flex items-center gap-x-2">
                 {/* @ts-ignore */}

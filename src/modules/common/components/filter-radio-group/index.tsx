@@ -1,3 +1,5 @@
+import { useTranslations } from 'next-intl'
+
 import { EllipseMiniSolid } from '@medusajs/icons'
 import { Label, RadioGroup, Text, clx } from '@medusajs/ui'
 
@@ -19,6 +21,8 @@ const FilterRadioGroup = ({
   handleChange,
   'data-testid': dataTestId,
 }: FilterRadioGroupProps) => {
+  const t = useTranslations()
+
   return (
     <div className="flex gap-x-3 flex-col gap-y-3">
       <Text className="txt-compact-small-plus text-ui-fg-muted">{title}</Text>
@@ -48,7 +52,7 @@ const FilterRadioGroup = ({
               data-testid="radio-label"
               data-active={i.value === value}
             >
-              {i.label}
+              {t(i.label)}
             </Label>
           </div>
         ))}

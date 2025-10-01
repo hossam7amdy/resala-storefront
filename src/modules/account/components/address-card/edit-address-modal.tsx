@@ -1,5 +1,7 @@
 'use client'
 
+import { useTranslations } from 'next-intl'
+
 import React, { useEffect, useState, useActionState } from 'react'
 import { PencilSquare as Edit, Trash } from '@medusajs/icons'
 import { Button, Heading, Text, clx } from '@medusajs/ui'
@@ -60,6 +62,7 @@ const EditAddress: React.FC<EditAddressProps> = ({
     await deleteCustomerAddress(address.id)
     setRemoving(false)
   }
+  const t = useTranslations()
 
   return (
     <>
@@ -108,7 +111,7 @@ const EditAddress: React.FC<EditAddressProps> = ({
             data-testid="address-edit-button"
           >
             <Edit />
-            Edit
+            {t('EDIT')}
           </button>
           <button
             className="text-small-regular text-ui-fg-base flex items-center gap-x-2"
@@ -116,14 +119,14 @@ const EditAddress: React.FC<EditAddressProps> = ({
             data-testid="address-delete-button"
           >
             {removing ? <Spinner /> : <Trash />}
-            Remove
+            {t('REMOVE')}
           </button>
         </div>
       </div>
 
       <Modal isOpen={state} close={close} data-testid="edit-address-modal">
         <Modal.Title>
-          <Heading className="mb-2">Edit address</Heading>
+          <Heading className="mb-2">{t('EDIT_ADDRESS')}</Heading>
         </Modal.Title>
         <form action={formAction}>
           <input type="hidden" name="addressId" value={address.id} />
@@ -225,9 +228,9 @@ const EditAddress: React.FC<EditAddressProps> = ({
                 className="h-10"
                 data-testid="cancel-button"
               >
-                Cancel
+                {t('CANCEL')}
               </Button>
-              <SubmitButton data-testid="save-button">Save</SubmitButton>
+              <SubmitButton data-testid="save-button">{t('SAVE')}</SubmitButton>
             </div>
           </Modal.Footer>
         </form>

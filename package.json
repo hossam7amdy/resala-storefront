@@ -8,7 +8,8 @@
     "start": "next start",
     "lint": "next lint",
     "analyze": "ANALYZE=true next build",
-    "check-types": "tsc --noEmit"
+    "check-types": "tsc --noEmit",
+    "format": "prettier --write ."
   },
   "dependencies": {
     "@headlessui/react": "^2.2.0",
@@ -16,8 +17,11 @@
     "@medusajs/js-sdk": "2.10.1",
     "@medusajs/ui": "4.0.21",
     "@radix-ui/react-accordion": "^1.2.1",
+    "@stripe/react-stripe-js": "^5.0.0",
+    "@stripe/stripe-js": "^8.0.0",
     "lodash": "^4.17.21",
     "next": "^15.3.1",
+    "next-intl": "^3.26.3",
     "pg": "^8.11.3",
     "qs": "^6.12.1",
     "react": "^18.2.0",
