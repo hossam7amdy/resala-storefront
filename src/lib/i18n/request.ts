@@ -1,6 +1,7 @@
 import { getRequestConfig } from 'next-intl/server'
-import { routing } from './settings'
+import { LOCALE_COOKIE, routing } from './settings'
 import type { Formats } from 'next-intl'
+import { cookies } from 'next/headers'
 
 export const formats: Formats = {
   dateTime: {
@@ -25,25 +26,16 @@ export const formats: Formats = {
 
 export type FormatsType = typeof formats
 
-const getI18NRequestConfig = getRequestConfig(
-  async ({ requestLocale }: { requestLocale: Promise<string | undefined> }) => {
-    // resolve the locale asynchronously
-    const resolvedRequestLocale = (await requestLocale) || routing.defaultLocale
+const getI18NRequestConfig = getRequestConfig(async () => {
+  const store = await cookies()
+  const locale = store.get(LOCALE_COOKIE)?.value || routing.defaultLocale
+  const messages = (await import(`../../../messages/${locale}.json`)).default
 
-    // validate the locale and fallback if necessary
-    const resolvedLocale = routing.locales.includes(resolvedRequestLocale)
-      ? resolvedRequestLocale
-      : routing.defaultLocale
-
-    const messages = (await import(`../../../messages/${resolvedLocale}.json`))
-      .default
-
-    return {
-      locale: resolvedLocale,
-      messages,
-      formats,
-    }
+  return {
+    locale,
+    messages,
+    formats,
   }
-)
+})
 
 export default getI18NRequestConfig

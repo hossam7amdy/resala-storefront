@@ -3,7 +3,7 @@ import { defineRouting } from 'next-intl/routing'
 export const fallbackLng = 'ar'
 export const languages = [fallbackLng, 'en']
 export const localePrefix = 'never'
-export const LOCALE_COOKIE = 'NEXT_LOCALE'
+export const LOCALE_COOKIE = '_resala_locale'
 
 export const routing = defineRouting({
   locales: languages,
