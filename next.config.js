@@ -12,6 +12,13 @@ const nextConfig = {
       fullUrl: true,
     },
   },
+  env: {
+    BACKEND_URL: process.env.BACKEND_URL,
+    NEXT_PUBLIC_PUBLISHABLE_KEY: process.env.NEXT_PUBLIC_PUBLISHABLE_KEY,
+    NEXT_PUBLIC_BASE_URL: process.env.NEXT_PUBLIC_BASE_URL,
+    NEXT_PUBLIC_DEFAULT_REGION: process.env.NEXT_PUBLIC_DEFAULT_REGION,
+    REVALIDATE_SECRET: process.env.REVALIDATE_SECRET,
+  },
   eslint: {
     ignoreDuringBuilds: true,
   },
