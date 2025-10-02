@@ -1,5 +1,3 @@
-import { useTranslations } from 'next-intl'
-
 import { Disclosure } from '@headlessui/react'
 import { Badge, Button, clx } from '@medusajs/ui'
 import { useEffect } from 'react'
@@ -43,7 +41,6 @@ const AccountInfo = ({
     }
   }, [isSuccess, close])
 
-  const t = useTranslations()
   return (
     <div className="text-small-regular" data-testid={dataTestid}>
       <div className="flex items-end justify-between">
@@ -68,7 +65,7 @@ const AccountInfo = ({
             data-testid="edit-button"
             data-active={state}
           >
-            {state ? t('CANCEL') : t('EDIT')}
+            {state ? 'Cancel' : 'Edit'}
           </Button>
         </div>
       </div>
@@ -87,9 +84,7 @@ const AccountInfo = ({
           data-testid="success-message"
         >
           <Badge className="p-2 my-4" color="green">
-            <span>
-              {label} {t('UPDATED_SUCCESSFULLY')}
-            </span>
+            <span>{label} updated succesfully</span>
           </Badge>
         </Disclosure.Panel>
       </Disclosure>
@@ -133,7 +128,7 @@ const AccountInfo = ({
                 type="submit"
                 data-testid="save-button"
               >
-                {t('SAVE_CHANGES')}
+                Save changes
               </Button>
             </div>
           </div>

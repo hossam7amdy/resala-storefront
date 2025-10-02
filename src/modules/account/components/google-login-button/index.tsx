@@ -4,10 +4,8 @@ import { useCallback, useState } from 'react'
 import { Google, Spinner } from '@medusajs/icons'
 import { loginWithGoogle } from '@lib/data/customer'
 import { Button } from '@medusajs/ui'
-import { useTranslations } from 'next-intl'
 
 const GoogleLoginButton = () => {
-  const t = useTranslations()
   const [isLoading, setIsLoading] = useState(false)
 
   const handleGoogleLogin = useCallback(async () => {
@@ -29,7 +27,7 @@ const GoogleLoginButton = () => {
       data-testid="google-login-button"
     >
       {isLoading ? <Spinner className="animate-spin" /> : <Google />}
-      {isLoading ? t('Signing in...') : t('Continue with Google')}
+      {isLoading ? 'Signing in...' : 'Continue with Google'}
     </Button>
   )
 }

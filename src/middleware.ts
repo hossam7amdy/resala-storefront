@@ -109,7 +109,7 @@ export async function middleware(request: NextRequest) {
 
   let response = NextResponse.redirect(redirectUrl, 307)
 
-  const cacheIdCookie = request.cookies.get('_resala_cache_id')
+  const cacheIdCookie = request.cookies.get('_medusa_cache_id')
 
   const cacheId = cacheIdCookie?.value || crypto.randomUUID()
 
@@ -127,7 +127,7 @@ export async function middleware(request: NextRequest) {
 
   // if one of the country codes is in the url and the cache id is not set, set the cache id and redirect
   if (urlHasCountryCode && !cacheIdCookie) {
-    response.cookies.set('_resala_cache_id', cacheId, {
+    response.cookies.set('_medusa_cache_id', cacheId, {
       maxAge: 60 * 60 * 24,
     })
 

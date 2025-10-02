@@ -1,8 +1,7 @@
 'use client'
 
-import { useTranslations } from 'next-intl'
-
 import { Button } from '@medusajs/ui'
+
 import OrderCard from '../order-card'
 import LocalizedClientLink from '@modules/common/components/localized-client-link'
 import { HttpTypes } from '@medusajs/types'
@@ -23,21 +22,19 @@ const OrderOverview = ({ orders }: { orders: HttpTypes.StoreOrder[] }) => {
     )
   }
 
-  const t = useTranslations()
-
   return (
     <div
       className="w-full flex flex-col items-center gap-y-4"
       data-testid="no-orders-container"
     >
-      <h2 className="text-large-semi">{t('NOTHING_TO_SEE_HERE')}</h2>
+      <h2 className="text-large-semi">Nothing to see here</h2>
       <p className="text-base-regular">
-        {t('YOU_DON_T_HAVE_ANY_ORDERS_YET')} {':)'}
+        You don&apos;t have any orders yet, let us change that {':)'}
       </p>
       <div className="mt-4">
         <LocalizedClientLink href="/" passHref>
           <Button data-testid="continue-shopping-button">
-            {t('CONTINUE_SHOPPING')}
+            Continue shopping
           </Button>
         </LocalizedClientLink>
       </div>

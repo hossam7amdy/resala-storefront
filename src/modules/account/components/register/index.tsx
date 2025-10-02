@@ -1,7 +1,5 @@
 'use client'
 
-import { useTranslations } from 'next-intl'
-
 import { useActionState } from 'react'
 import Input from '@modules/common/components/input'
 import { LOGIN_VIEW } from '@modules/account/templates/login-template'
@@ -18,37 +16,36 @@ type Props = {
 const Register = ({ setCurrentView }: Props) => {
   const [message, formAction] = useActionState(signup, null)
 
-  const t = useTranslations()
-
   return (
     <div
       className="max-w-sm flex flex-col items-center"
       data-testid="register-page"
     >
       <h1 className="text-large-semi uppercase mb-6">
-        {t('BECOME_A_RESALA_STORE_MEMBER')}
+        Become a Resala Store Member
       </h1>
       <p className="text-center text-base-regular text-ui-fg-base mb-4">
-        {t('CREATE_YOUR_RESALA_STORE_MEMBE')}
+        Create your Resala Store Member profile, and get access to an enhanced
+        shopping experience.
       </p>
       <form className="w-full flex flex-col" action={formAction}>
         <div className="flex flex-col w-full gap-y-2">
           <Input
-            label={t('FIRST_NAME')}
+            label="First name"
             name="first_name"
             required
             autoComplete="given-name"
             data-testid="first-name-input"
           />
           <Input
-            label={t('LAST_NAME')}
+            label="Last name"
             name="last_name"
             required
             autoComplete="family-name"
             data-testid="last-name-input"
           />
           <Input
-            label={t('EMAIL')}
+            label="Email"
             name="email"
             required
             type="email"
@@ -56,14 +53,14 @@ const Register = ({ setCurrentView }: Props) => {
             data-testid="email-input"
           />
           <Input
-            label={t('PHONE')}
+            label="Phone"
             name="phone"
             type="tel"
             autoComplete="tel"
             data-testid="phone-input"
           />
           <Input
-            label={t('PASS')}
+            label="Password"
             name="password"
             required
             type="password"
@@ -73,27 +70,26 @@ const Register = ({ setCurrentView }: Props) => {
         </div>
         <ErrorMessage error={message} data-testid="register-error" />
         <span className="text-center text-ui-fg-base text-small-regular mt-6">
-          {t('BY_CREATING_AN_ACCOUNT_YOU_AG')}{' '}
+          By creating an account, you agree to Resala Store&apos;s{' '}
           <LocalizedClientLink
             href="/content/privacy-policy"
             className="underline"
           >
-            {t('PRIVACY_POLICY')}
+            Privacy Policy
           </LocalizedClientLink>{' '}
-          {t('AND')}{' '}
+          and{' '}
           <LocalizedClientLink
             href="/content/terms-of-use"
             className="underline"
           >
-            {t('TERMS_OF_USE')}
+            Terms of Use
           </LocalizedClientLink>
-          {t('_')}
+          .
         </span>
         <SubmitButton className="w-full mt-6" data-testid="register-button">
-          {t('JOIN')}
+          Join
         </SubmitButton>
       </form>
-
       <div className="w-full mt-6">
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
@@ -101,7 +97,7 @@ const Register = ({ setCurrentView }: Props) => {
           </div>
           <div className="relative flex justify-center text-sm">
             <span className="px-2 bg-white text-gray-500">
-              {t('Or continue with')}
+              Or continue with
             </span>
           </div>
         </div>
@@ -109,16 +105,15 @@ const Register = ({ setCurrentView }: Props) => {
           <GoogleLoginButton />
         </div>
       </div>
-
       <span className="text-center text-ui-fg-base text-small-regular mt-6">
-        {t('ALREADY_A_MEMBER')}{' '}
+        Already a member?{' '}
         <button
           onClick={() => setCurrentView(LOGIN_VIEW.SIGN_IN)}
           className="underline"
         >
-          {t('SIGN_IN')}
+          Sign in
         </button>
-        {t('_')}
+        .
       </span>
     </div>
   )

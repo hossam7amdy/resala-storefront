@@ -2,10 +2,12 @@
 
 import { sdk } from '@lib/config'
 import { HttpTypes } from '@medusajs/types'
-import { getCacheOptions, getRequestHeaders } from './cookies'
+import { getAuthHeaders, getCacheOptions } from './cookies'
 
 export const listCartShippingMethods = async (cartId: string) => {
-  const headers = await getRequestHeaders()
+  const headers = {
+    ...(await getAuthHeaders()),
+  }
 
   const next = {
     ...(await getCacheOptions('fulfillment')),
@@ -16,7 +18,11 @@ export const listCartShippingMethods = async (cartId: string) => {
       `/store/shipping-options`,
       {
         method: 'GET',
-        query: { cart_id: cartId },
+        query: {
+          cart_id: cartId,
+          fields:
+            '+service_zone.fulfllment_set.type,*service_zone.fulfillment_set.location.address',
+        },
         headers,
         next,
         cache: 'force-cache',
@@ -33,7 +39,9 @@ export const calculatePriceForShippingOption = async (
   cartId: string,
   data?: Record<string, unknown>
 ) => {
-  const headers = await getRequestHeaders()
+  const headers = {
+    ...(await getAuthHeaders()),
+  }
 
   const next = {
     ...(await getCacheOptions('fulfillment')),
@@ -56,5 +64,7 @@ export const calculatePriceForShippingOption = async (
       }
     )
     .then(({ shipping_option }) => shipping_option)
-    .catch(() => null)
+    .catch((e) => {
+      return null
+    })
 }

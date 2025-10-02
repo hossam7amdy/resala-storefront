@@ -1,25 +1,19 @@
-import { useTranslations } from 'next-intl'
-
 import { Heading } from '@medusajs/ui'
 import LocalizedClientLink from '@modules/common/components/localized-client-link'
 import React from 'react'
 
 const Help = () => {
-  const t = useTranslations()
-
   return (
     <div className="mt-6">
-      <Heading className="text-base-semi">{t('NEED_HELP')}</Heading>
+      <Heading className="text-base-semi">Need help?</Heading>
       <div className="text-base-regular my-2">
         <ul className="gap-y-2 flex flex-col">
           <li>
-            <LocalizedClientLink href="/contact">
-              {t('CONTACT')}
-            </LocalizedClientLink>
+            <LocalizedClientLink href="/contact">Contact</LocalizedClientLink>
           </li>
           <li>
             <LocalizedClientLink href="/contact">
-              {t('RETURNS_EXCHANGES')}
+              Returns & Exchanges
             </LocalizedClientLink>
           </li>
         </ul>

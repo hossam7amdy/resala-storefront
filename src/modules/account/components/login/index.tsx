@@ -1,12 +1,10 @@
-import { useTranslations } from 'next-intl'
-
 import { login } from '@lib/data/customer'
 import { LOGIN_VIEW } from '@modules/account/templates/login-template'
 import ErrorMessage from '@modules/checkout/components/error-message'
 import { SubmitButton } from '@modules/checkout/components/submit-button'
 import Input from '@modules/common/components/input'
+import GoogleLoginButton from '@modules/account/components/google-login-button'
 import { useActionState } from 'react'
-import GoogleLoginButton from '../google-login-button'
 
 type Props = {
   setCurrentView: (view: LOGIN_VIEW) => void
@@ -15,30 +13,28 @@ type Props = {
 const Login = ({ setCurrentView }: Props) => {
   const [message, formAction] = useActionState(login, null)
 
-  const t = useTranslations()
-
   return (
     <div
       className="max-w-sm w-full flex flex-col items-center"
       data-testid="login-page"
     >
-      <h1 className="text-large-semi uppercase mb-6">{t('WELCOME_BACK')}</h1>
+      <h1 className="text-large-semi uppercase mb-6">Welcome back</h1>
       <p className="text-center text-base-regular text-ui-fg-base mb-8">
-        {t('SIGN_IN_TO_ACCESS_AN_ENHANCED')}
+        Sign in to access an enhanced shopping experience.
       </p>
       <form className="w-full" action={formAction}>
         <div className="flex flex-col w-full gap-y-2">
           <Input
-            label={t('EMAIL')}
+            label="Email"
             name="email"
             type="email"
-            title={t('ENTER_VALID_EMAIL')}
+            title="Enter a valid email address."
             autoComplete="email"
             required
             data-testid="email-input"
           />
           <Input
-            label={t('PASS')}
+            label="Password"
             name="password"
             type="password"
             autoComplete="current-password"
@@ -48,7 +44,7 @@ const Login = ({ setCurrentView }: Props) => {
         </div>
         <ErrorMessage error={message} data-testid="login-error-message" />
         <SubmitButton data-testid="sign-in-button" className="w-full mt-6">
-          {t('SIGN_IN')}
+          Sign in
         </SubmitButton>
       </form>
 
@@ -59,7 +55,7 @@ const Login = ({ setCurrentView }: Props) => {
           </div>
           <div className="relative flex justify-center text-sm">
             <span className="px-2 bg-white text-gray-500">
-              {t('Or continue with')}
+              Or continue with
             </span>
           </div>
         </div>
@@ -69,15 +65,15 @@ const Login = ({ setCurrentView }: Props) => {
       </div>
 
       <span className="text-center text-ui-fg-base text-small-regular mt-6">
-        {t('NOT_A_MEMBER')}{' '}
+        Not a member?{' '}
         <button
           onClick={() => setCurrentView(LOGIN_VIEW.REGISTER)}
           className="underline"
           data-testid="register-button"
         >
-          {t('JOIN_US')}
+          Join us
         </button>
-        {t('_')}
+        .
       </span>
     </div>
   )

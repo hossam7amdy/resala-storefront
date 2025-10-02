@@ -1,5 +1,3 @@
-import { getTranslations } from 'next-intl/server'
-
 import { listCategories } from '@lib/data/categories'
 import { listCollections } from '@lib/data/collections'
 import { Text, clx } from '@medusajs/ui'
@@ -12,7 +10,6 @@ export default async function Footer() {
     fields: '*products',
   })
   const productCategories = await listCategories()
-  const t = await getTranslations()
 
   return (
     <footer className="border-t border-ui-border-base w-full">
@@ -23,14 +20,14 @@ export default async function Footer() {
               href="/"
               className="txt-compact-xlarge-plus text-ui-fg-subtle hover:text-ui-fg-base uppercase"
             >
-              {t('RESALA_STORE')}
+              Resala Store
             </LocalizedClientLink>
           </div>
           <div className="text-small-regular gap-10 md:gap-x-16 grid grid-cols-2 sm:grid-cols-3">
             {productCategories && productCategories?.length > 0 && (
               <div className="flex flex-col gap-y-2">
                 <span className="txt-small-plus txt-ui-fg-base">
-                  {t('CATEGORIES')}
+                  Categories
                 </span>
                 <ul
                   className="grid grid-cols-1 gap-2"
@@ -88,7 +85,7 @@ export default async function Footer() {
             {collections && collections.length > 0 && (
               <div className="flex flex-col gap-y-2">
                 <span className="txt-small-plus txt-ui-fg-base">
-                  {t('COLLECTIONS')}
+                  Collections
                 </span>
                 <ul
                   className={clx(
@@ -112,9 +109,7 @@ export default async function Footer() {
               </div>
             )}
             <div className="flex flex-col gap-y-2">
-              <span className="txt-small-plus txt-ui-fg-base">
-                {t('MEDUSA')}
-              </span>
+              <span className="txt-small-plus txt-ui-fg-base">Resala</span>
               <ul className="grid grid-cols-1 gap-y-2 text-ui-fg-subtle txt-small">
                 <li>
                   <a
@@ -123,7 +118,7 @@ export default async function Footer() {
                     rel="noreferrer"
                     className="hover:text-ui-fg-base"
                   >
-                    {t('GITHUB')}
+                    GitHub
                   </a>
                 </li>
                 <li>
@@ -133,7 +128,7 @@ export default async function Footer() {
                     rel="noreferrer"
                     className="hover:text-ui-fg-base"
                   >
-                    {t('DOCUMENTATION')}
+                    Documentation
                   </a>
                 </li>
                 <li>
@@ -143,7 +138,7 @@ export default async function Footer() {
                     rel="noreferrer"
                     className="hover:text-ui-fg-base"
                   >
-                    {t('SOURCE_CODE')}
+                    Source code
                   </a>
                 </li>
               </ul>
@@ -152,8 +147,7 @@ export default async function Footer() {
         </div>
         <div className="flex w-full mb-16 justify-between text-ui-fg-muted">
           <Text className="txt-compact-small">
-            {t('_8')} {new Date().getFullYear()}{' '}
-            {t('RESALA_STORE_ALL_RIGHTS_RESER')}
+            © {new Date().getFullYear()} Resala Store. All rights reserved.
           </Text>
           <MedusaCTA />
         </div>

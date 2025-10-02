@@ -1,8 +1,7 @@
 'use client'
 
 import { clx } from '@medusajs/ui'
-import { useSearchParams } from 'next/navigation'
-import { usePathname, useRouter } from '@lib/i18n/navigation'
+import { usePathname, useRouter, useSearchParams } from 'next/navigation'
 
 export function Pagination({
   page,

@@ -1,7 +1,5 @@
 'use client'
 
-import { useTranslations } from 'next-intl'
-
 import React, { useEffect, useActionState } from 'react'
 
 import Input from '@modules/common/components/input'
@@ -47,12 +45,10 @@ const ProfileEmail: React.FC<MyInformationProps> = ({ customer }) => {
     setSuccessState(state.success)
   }, [state])
 
-  const t = useTranslations()
-
   return (
     <form action={formAction} className="w-full">
       <AccountInfo
-        label={t('EMAIL')}
+        label="Email"
         currentInfo={`${customer.email}`}
         isSuccess={successState}
         isError={!!state.error}
@@ -62,7 +58,7 @@ const ProfileEmail: React.FC<MyInformationProps> = ({ customer }) => {
       >
         <div className="grid grid-cols-1 gap-y-2">
           <Input
-            label={t('EMAIL')}
+            label="Email"
             name="email"
             type="email"
             autoComplete="email"
