@@ -1,24 +1,25 @@
 import 'server-only'
 import { cookies as nextCookies } from 'next/headers'
-import { fallbackLng, LOCALE_COOKIE } from '@lib/i18n/settings'
 
-export const getAuthHeaders = async (): Promise<
-  { authorization: string } | Record<string, any>
-> => {
-  const cookies = await nextCookies()
-  const token = cookies.get('_resala_jwt')?.value
+export const getAuthHeaders = async (): Promise<{ authorization?: string }> => {
+  try {
+    const cookies = await nextCookies()
+    const token = cookies.get('_medusa_jwt')?.value
 
-  if (!token) {
+    if (!token) {
+      return {}
+    }
+
+    return { authorization: `Bearer ${token}` }
+  } catch {
     return {}
   }
-
-  return { authorization: `Bearer ${token}` }
 }
 
 export const getCacheTag = async (tag: string): Promise<string> => {
   try {
     const cookies = await nextCookies()
-    const cacheId = cookies.get('_resala_cache_id')?.value
+    const cacheId = cookies.get('_medusa_cache_id')?.value
 
     if (!cacheId) {
       return ''
@@ -32,7 +33,7 @@ export const getCacheTag = async (tag: string): Promise<string> => {
 
 export const getCacheOptions = async (
   tag: string
-): Promise<{ tags: string[] } | Record<string, any>> => {
+): Promise<{ tags?: string[] }> => {
   if (typeof window !== 'undefined') {
     return {}
   }
@@ -48,7 +49,7 @@ export const getCacheOptions = async (
 
 export const setAuthToken = async (token: string) => {
   const cookies = await nextCookies()
-  cookies.set('_resala_jwt', token, {
+  cookies.set('_medusa_jwt', token, {
     maxAge: 60 * 60 * 24 * 7,
     httpOnly: true,
     sameSite: 'strict',
@@ -58,19 +59,19 @@ export const setAuthToken = async (token: string) => {
 
 export const removeAuthToken = async () => {
   const cookies = await nextCookies()
-  cookies.set('_resala_jwt', '', {
+  cookies.set('_medusa_jwt', '', {
     maxAge: -1,
   })
 }
 
 export const getCartId = async () => {
   const cookies = await nextCookies()
-  return cookies.get('_resala_cart_id')?.value
+  return cookies.get('_medusa_cart_id')?.value
 }
 
 export const setCartId = async (cartId: string) => {
   const cookies = await nextCookies()
-  cookies.set('_resala_cart_id', cartId, {
+  cookies.set('_medusa_cart_id', cartId, {
     maxAge: 60 * 60 * 24 * 7,
     httpOnly: true,
     sameSite: 'strict',
@@ -80,36 +81,7 @@ export const setCartId = async (cartId: string) => {
 
 export const removeCartId = async () => {
   const cookies = await nextCookies()
-  cookies.set('_resala_cart_id', '', {
+  cookies.set('_medusa_cart_id', '', {
     maxAge: -1,
   })
-}
-
-export const getLocale = async () => {
-  const cookies = await nextCookies()
-  return cookies.get(LOCALE_COOKIE)?.value || fallbackLng
-}
-
-export const setLocale = async (locale: string) => {
-  const cookies = await nextCookies()
-  cookies.set(LOCALE_COOKIE, locale, {
-    maxAge: 60 * 60 * 24 * 365,
-  })
-}
-
-export const getLocaleHeaders = async () => {
-  const locale = await getLocale()
-  return { 'accept-language': locale }
-}
-
-export const getRequestHeaders = async () => {
-  const [authHeaders, localeHeaders] = await Promise.all([
-    getAuthHeaders(),
-    getLocaleHeaders(),
-  ])
-  
-  return {
-    ...authHeaders,
-    ...localeHeaders,
-  }
 }

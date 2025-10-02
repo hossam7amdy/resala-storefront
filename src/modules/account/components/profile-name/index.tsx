@@ -1,7 +1,5 @@
 'use client'
 
-import { useTranslations } from 'next-intl'
-
 import React, { useEffect, useActionState } from 'react'
 
 import Input from '@modules/common/components/input'
@@ -47,12 +45,10 @@ const ProfileName: React.FC<MyInformationProps> = ({ customer }) => {
     setSuccessState(state.success)
   }, [state])
 
-  const t = useTranslations()
-
   return (
     <form action={formAction} className="w-full overflow-visible">
       <AccountInfo
-        label={t('NAME')}
+        label="Name"
         currentInfo={`${customer.first_name} ${customer.last_name}`}
         isSuccess={successState}
         isError={!!state?.error}
@@ -61,14 +57,14 @@ const ProfileName: React.FC<MyInformationProps> = ({ customer }) => {
       >
         <div className="grid grid-cols-2 gap-x-4">
           <Input
-            label={t('FIRST_NAME')}
+            label="First name"
             name="first_name"
             required
             defaultValue={customer.first_name ?? ''}
             data-testid="first-name-input"
           />
           <Input
-            label={t('LAST_NAME')}
+            label="Last name"
             name="last_name"
             required
             defaultValue={customer.last_name ?? ''}

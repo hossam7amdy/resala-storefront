@@ -4,12 +4,12 @@ import { sdk } from '@lib/config'
 import medusaError from '@lib/util/medusa-error'
 import { HttpTypes } from '@medusajs/types'
 import { revalidateTag } from 'next/cache'
-import { redirect } from '@lib/i18n/navigation'
+import { redirect } from 'next/navigation'
 import {
+  getAuthHeaders,
   getCacheOptions,
   getCacheTag,
   getCartId,
-  getRequestHeaders,
   removeAuthToken,
   removeCartId,
   setAuthToken,
@@ -17,7 +17,13 @@ import {
 
 export const retrieveCustomer =
   async (): Promise<HttpTypes.StoreCustomer | null> => {
-    const headers = await getRequestHeaders()
+    const authHeaders = await getAuthHeaders()
+
+    if (!authHeaders) return null
+
+    const headers = {
+      ...authHeaders,
+    }
 
     const next = {
       ...(await getCacheOptions('customers')),
@@ -38,7 +44,9 @@ export const retrieveCustomer =
   }
 
 export const updateCustomer = async (body: HttpTypes.StoreUpdateCustomer) => {
-  const headers = await getRequestHeaders()
+  const headers = {
+    ...(await getAuthHeaders()),
+  }
 
   const updateRes = await sdk.store.customer
     .update(body, {}, headers)
@@ -68,7 +76,9 @@ export async function signup(_currentState: unknown, formData: FormData) {
 
     await setAuthToken(token as string)
 
-    const headers = await getRequestHeaders()
+    const headers = {
+      ...(await getAuthHeaders()),
+    }
 
     const { customer: createdCustomer } = await sdk.store.customer.create(
       customerForm,
@@ -99,13 +109,13 @@ export async function login(_currentState: unknown, formData: FormData) {
   const password = formData.get('password') as string
 
   try {
-    await sdk.auth
-      .login('customer', 'emailpass', { email, password })
-      .then(async (token) => {
-        await setAuthToken(token as string)
-        const customerCacheTag = await getCacheTag('customers')
-        revalidateTag(customerCacheTag)
-      })
+    const token = await sdk.auth.login('customer', 'emailpass', {
+      email,
+      password,
+    })
+    await setAuthToken(token as string)
+    const customerCacheTag = await getCacheTag('customers')
+    revalidateTag(customerCacheTag)
   } catch (error: any) {
     return error.toString()
   }
@@ -127,7 +137,7 @@ export async function loginWithGoogle(callbackUrl: string) {
   }
 
   try {
-    await setAuthToken(authUrl as string)
+    await setAuthToken(authUrl)
     const customerCacheTag = await getCacheTag('customers')
     revalidateTag(customerCacheTag)
   } catch (error: any) {
@@ -177,11 +187,12 @@ export async function transferCart() {
     return
   }
 
-  const headers = await getRequestHeaders()
+  const headers = await getAuthHeaders()
 
   await sdk.store.cart.transferCart(cartId, {}, headers)
 
-  revalidateTag('cart')
+  const cartCacheTag = await getCacheTag('carts')
+  revalidateTag(cartCacheTag)
 }
 
 export const addCustomerAddress = async (
@@ -206,11 +217,13 @@ export const addCustomerAddress = async (
     is_default_shipping: isDefaultShipping,
   }
 
-  const headers = await getRequestHeaders()
+  const headers = {
+    ...(await getAuthHeaders()),
+  }
 
   return sdk.store.customer
     .createAddress(address, {}, headers)
-    .then(async () => {
+    .then(async ({ customer: _ }) => {
       const customerCacheTag = await getCacheTag('customers')
       revalidateTag(customerCacheTag)
       return { success: true, error: null }
@@ -223,7 +236,9 @@ export const addCustomerAddress = async (
 export const deleteCustomerAddress = async (
   addressId: string
 ): Promise<void> => {
-  const headers = await getRequestHeaders()
+  const headers = {
+    ...(await getAuthHeaders()),
+  }
 
   await sdk.store.customer
     .deleteAddress(addressId, headers)
@@ -266,7 +281,9 @@ export const updateCustomerAddress = async (
     address.phone = phone
   }
 
-  const headers = await getRequestHeaders()
+  const headers = {
+    ...(await getAuthHeaders()),
+  }
 
   return sdk.store.customer
     .updateAddress(addressId, address, {}, headers)

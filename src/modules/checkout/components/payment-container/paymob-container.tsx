@@ -102,7 +102,7 @@ const PaymobCardContainer: React.FC<PaymobContainerProps> = ({
       </PaymentContainer>
       <Script
         src="https://pay.google.com/gp/p/js/pay.js"
-        strategy="afterInteractive"
+        strategy="lazyOnload"
       />
     </>
   )

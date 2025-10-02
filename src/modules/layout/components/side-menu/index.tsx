@@ -1,7 +1,5 @@
 'use client'
 
-import { useTranslations } from 'next-intl'
-
 import { Popover, PopoverPanel, Transition } from '@headlessui/react'
 import { ArrowRightMini, XMark } from '@medusajs/icons'
 import { Text, clx, useToggleState } from '@medusajs/ui'
@@ -21,8 +19,6 @@ const SideMenuItems = {
 const SideMenu = ({ regions }: { regions: HttpTypes.StoreRegion[] | null }) => {
   const toggleState = useToggleState()
 
-  const t = useTranslations()
-
   return (
     <div className="h-full">
       <div className="flex items-center h-full">
@@ -34,7 +30,7 @@ const SideMenu = ({ regions }: { regions: HttpTypes.StoreRegion[] | null }) => {
                   data-testid="nav-menu-button"
                   className="relative h-full flex items-center transition-all ease-out duration-200 focus:outline-none hover:text-ui-fg-base"
                 >
-                  {t('MENU')}
+                  Menu
                 </Popover.Button>
               </div>
 
@@ -68,8 +64,7 @@ const SideMenu = ({ regions }: { regions: HttpTypes.StoreRegion[] | null }) => {
                               onClick={close}
                               data-testid={`${name.toLowerCase()}-link`}
                             >
-                              {/* {name} */}
-                              {name && t(`MENU_${name.toUpperCase()}`)}
+                              {name}
                             </LocalizedClientLink>
                           </li>
                         )
@@ -95,8 +90,8 @@ const SideMenu = ({ regions }: { regions: HttpTypes.StoreRegion[] | null }) => {
                         />
                       </div>
                       <Text className="flex justify-between txt-compact-small">
-                        {t('_8')} {new Date().getFullYear()}{' '}
-                        {t('RESALA_STORE_ALL_RIGHTS')}
+                        © {new Date().getFullYear()} Resala Store. All rights
+                        reserved.
                       </Text>
                     </div>
                   </div>
